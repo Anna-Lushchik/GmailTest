@@ -3,7 +3,6 @@ package com.epam.gmail.test;
 import static org.junit.Assert.*;
 
 import java.awt.AWTException;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -16,7 +15,6 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
@@ -30,13 +28,11 @@ public class GmailAutomationTest {
 	private static final Logger logger = Logger.getLogger(SettingsPage.class);
 
 	private WebDriver driver;
-	private WebElement waitElement;
 
 	private Steps steps;
 	private MailPage mailPage;
 	private SendLetterPage sendLetterPage;
 	private SettingsPage settingsPage;
-	private LoginPage loginPage;
 	private ThemePage themePage;
 	private GeneralPage generalPage;
 	private Shortcut shortcut;
@@ -53,19 +49,19 @@ public class GmailAutomationTest {
 	private String attributeAlt = "alt";
 	private String attributeHidefocus = "hidefocus";
 	private String attributeGoomoji = "goomoji";
-	private String attach = "Приложение";
-	private String messageSizeAttach = "Размер файла превышает допустимые 25 МБ.";
-	private String themeTitle = "Выбор темы";
-	private String themeSelectTitle = "Выберите фоновое изображение";
-	private String messageTipeUploadFile = "Формат выбранного файла (DSC_1117.NEF) не поддерживается";
-	private String settingsTitle = "Настройки";
-	private String generalTitle = "Общие";
-	private String newMessage = "Новое сообщение";
-	private String newShortcut = "Новый ярлык";
+	private String attach = "Attachment";
+	private String messageSizeAttach = "The file that you are trying to send exceeds the 25 MB attachment limit.";
+	private String themeTitle = "Pick your theme";
+	private String themeSelectTitle = "Select your background image";
+	private String messageTipeUploadFile = "Selected file [DSC.NEF] is not supported for upload.";
+	private String settingsTitle = "Settings";
+	private String generalTitle = "General";
+	private String newMessage = "New Message";
+	private String newShortcut = "New Label";
 	private String parentShortcut = "My shortcut";
 	private String insertedShortcut = "My inserted shortcut";
-	private String deleteShortcutsTitle = "Удаление ярлыков";
-	private String selected = "Помеченные";
+	private String deleteShortcutsTitle = "Remove Labels";
+	private String selected = "Starred";
 	private String starred = "starred";
 	private String subject = "subject";
 	private String choosenTheme = "//ssl.gstatic.com/ui/v1/icons/mail/themes/beach2/";
@@ -78,7 +74,6 @@ public class GmailAutomationTest {
 		mailPage = new MailPage(driver);
 		sendLetterPage = new SendLetterPage(driver);
 		settingsPage = new SettingsPage(driver);
-		loginPage = new LoginPage(driver);
 		themePage = new ThemePage(driver);
 		generalPage = new GeneralPage(driver);
 		shortcut = new Shortcut(driver);
@@ -164,7 +159,7 @@ public class GmailAutomationTest {
 		sendLetterPage.clickEmoticonIcon();
 		assertTrue(isElementPresent(locators.emoticonsWindow));
 		
-		ArrayList listSmiley = sendLetterPage.chooseEmoticons();
+		List listSmiley = sendLetterPage.chooseEmoticons();
 		assertEquals(listSmiley.get(0),
 				getElementAtribute(locators.pathToMessageField + "img[" + 1
 						+ "]", attributeGoomoji));
@@ -289,7 +284,7 @@ public class GmailAutomationTest {
 		assertTrue(isElementPresent(locators.listOfLetters));
 		assertTrue(driver.getCurrentUrl().contains("spam"));
 		
-		ArrayList<String> letter = mailPage.openLastMessage();
+		List<String> letter = mailPage.openLastMessage();
 		assertTrue(isElementPresent(locators.openedLetterWindow));
 		
 		mailPage.clickNotSpam();
@@ -336,9 +331,9 @@ public class GmailAutomationTest {
 	@Test
 	public void testCheckStarSelection_13() {
 		steps.loginGmail(USERNAME_2, PASSWORD_2);
-		new WebDriverWait(driver,60).until(ExpectedConditions.presenceOfElementLocated(By.xpath("//div[@class='Cp']/div/table/tbody/tr[1]/td[3]/span")));
+		new WebDriverWait(driver,60).until(ExpectedConditions.presenceOfElementLocated(By.xpath(locators.lastMessageThema)));
 		
-		ArrayList<String> starredLetter = mailPage.clickStar(); 
+		List<String> starredLetter = mailPage.clickStar(); 
 		assertEquals(selected,
 				getElementAtribute(locators.lastMessageStar, "title"));
 		
@@ -374,7 +369,7 @@ public class GmailAutomationTest {
 		
 		sendLetterPage.clickWriteButton();
 		assertEquals(newMessage, getElementText(locators.pathNewMessage));
-		new WebDriverWait(driver,60).until(ExpectedConditions.presenceOfElementLocated(By.xpath("//div[@class='wO nr l1']/textarea")));;
+		new WebDriverWait(driver,60).until(ExpectedConditions.presenceOfElementLocated(By.xpath(locators.whomText)));;
 		
 		sendLetterPage.writeNewMessageWithoutAttach(USERNAME_3, "Test14", "message");
 		assertEquals(USERNAME_3, getElementAtribute(locators.fieldWhom, "email"));

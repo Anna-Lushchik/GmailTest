@@ -45,7 +45,7 @@ public class MailPage extends AbstractPage {
 	@FindBy(xpath = "//div[@class='asl T-I-J3 J-J5-Ji']")
 	private WebElement buttonToSpam;
 
-	@FindBy(xpath = "//div[@class='iH']/div/div/div[text()='Не спам']")
+	@FindBy(xpath = "//div[@class='iH']/div/div/div[text()='Not spam']")
 	private WebElement buttonNotSpam;
 
 	@FindBy(xpath = "(//div[@class='T-Jo-auh'])[2]")
@@ -135,8 +135,8 @@ public class MailPage extends AbstractPage {
 		logger.info("Mark letter as not spam");
 	}
 
-	public ArrayList<String> clickStar() {
-		ArrayList<String> letterText = new ArrayList<String>();
+	public List<String> clickStar() {
+		List<String> letterText = new ArrayList<String>();
 		letterText.add(driver.findElement(By.xpath(lastMessageSubject)).getText());
 		letterText.add(driver.findElement(By.xpath(lastMessageText)).getText());
 		lastMessageStar.click();
@@ -163,9 +163,9 @@ public class MailPage extends AbstractPage {
 		driver.switchTo().window(originalWindow);
 	}
 
-	public ArrayList<String> openLastMessage() {
+	public  List<String> openLastMessage() {
 		lastMessageLink.click();
-		ArrayList<String> letterText = new ArrayList<String>();
+		List<String> letterText = new ArrayList<String>();
 		letterText.add(driver.findElement(By.xpath(openedMessageSubject)).getText());
 		letterText.add(driver.findElement(By.xpath(openedMessageText)).getText());
 		return letterText;

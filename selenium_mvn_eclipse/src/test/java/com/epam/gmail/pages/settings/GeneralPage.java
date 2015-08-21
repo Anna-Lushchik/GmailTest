@@ -17,7 +17,7 @@ public class GeneralPage extends SettingsPage {
 	@FindBy(xpath = "//div[@class='rU']/button[1]")
 	private WebElement buttonSaveChanges;
 
-	@FindBy(xpath = "//div[@aria-label='Подпись']")
+	@FindBy(xpath = "//div[@aria-label='Signature']")
 	private WebElement fieldEnterSignature;
 
 	@FindBy(xpath = "(//input[@name='bx_ve'])[2]")

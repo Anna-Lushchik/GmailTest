@@ -32,7 +32,7 @@ public class Locators {
 	protected String pathToTextMessage = "(//img[@class='CToWUd'])";
 	
 	//-6-
-	protected String themeBeach = "//div[@aria-label='Пляж (источник: iStockPhoto)']";
+	protected String themeBeach = "//div[@aria-label='Beach (by: iStockPhoto)']";
 	
 	protected String pathGeneralTitle = "//a[@href='https://mail.google.com/mail/#settings/general']";
 	
@@ -69,7 +69,7 @@ public class Locators {
 	
 	//-12-
 	
-	protected String fieldSignature = "//div[@aria-label='Подпись']";
+	protected String fieldSignature = "//div[@aria-label='Signature']";
 	
 	protected String buttonSaveChanges = "//button[@guidedhelpid='save_changes_button']";
 	
@@ -86,6 +86,8 @@ public class Locators {
 	protected String topPage = "//div[@class='w-MH a6P']";
 	
 	protected String GoogleTitleOnLoginPage = "//div[@class='banner']";
+	
+	protected String whomText = "//div[@class='wO nr l1']/textarea";
 	
 	protected String fieldWhom = "//div[@class='vT']";
 	

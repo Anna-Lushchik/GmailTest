@@ -40,10 +40,10 @@ public class Shortcut extends AbstractPage {
 	@FindBy(className = "J-at1-auR")
 	private WebElement buttonConfirmColorShortcut;
 
-	@FindBy(xpath="//div[text()='Добавить вложенный ярлык']")
+	@FindBy(xpath="//div[text()='Add sublabel']")
 	private WebElement buttonAddNestedShortcut;
 
-	@FindBy(xpath="//div[text()='Удалить ярлык']")
+	@FindBy(xpath="//div[text()='Remove label']")
 	private WebElement buttonDeleteShortcut;
 
 	@FindBy(xpath = "//div[@class='Kj-JD-Jl']/button[1]")

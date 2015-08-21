@@ -21,10 +21,10 @@ public class ThemePage extends SettingsPage {
 	@FindBy(xpath = "//a[@class='e NvzLyc']")
 	private WebElement setThemes;
 
-	@FindBy(xpath = "//div[@class='Kj-JD-Jl a8Y']/div[text()='Мои фото']")
+	@FindBy(xpath = "//div[@class='Kj-JD-Jl a8Y']/div[text()='My Photos']")
 	private WebElement buttonMyPhotos;
 
-	@FindBy(xpath = "//div[text()='Загрузка фото']")
+	@FindBy(xpath = "//div[text()='Upload a photo']")
 	private WebElement buttonDownloadPhoto;
 
 	@FindBy(className = "a-b-c d-u d-u-Q")

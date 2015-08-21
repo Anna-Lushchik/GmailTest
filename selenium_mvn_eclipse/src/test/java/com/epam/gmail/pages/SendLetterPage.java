@@ -4,6 +4,7 @@ import org.apache.log4j.Logger;
 
 import java.awt.AWTException;
 import java.util.ArrayList;
+import java.util.List;
 
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
@@ -67,7 +68,7 @@ public class SendLetterPage extends AbstractPage {
 
 	public void clickWriteButton() {
 		buttonWrite.click();
-		logger.info("Dialog 'Новое сообщение' appears");
+		logger.info("Dialog 'New Message' appears");
 	}
 
 	public void writeWhomLetter(String whom) {
@@ -110,8 +111,8 @@ public class SendLetterPage extends AbstractPage {
 		emotionalSmiley.click();
 	}
 
-	public ArrayList<String> chooseEmoticons() {
-		ArrayList<String> listSmiley = new ArrayList<String>();
+	public List<String> chooseEmoticons() {
+		List<String> listSmiley = new ArrayList<String>();
 		smiley1.click();
 		listSmiley.add(smiley1.getAttribute(attributeString));
 		smiley2.click();
