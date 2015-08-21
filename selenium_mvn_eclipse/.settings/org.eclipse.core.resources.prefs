@@ -1,0 +1,6 @@
+eclipse.preferences.version=1
+encoding//src/test/java/com/epam/gmail/pages/MailPage.java=UTF-8
+encoding//src/test/java/com/epam/gmail/pages/SendLetterPage.java=UTF-8
+encoding//src/test/java/com/epam/gmail/pages/settings/GeneralPage.java=UTF-8
+encoding//src/test/java/com/epam/gmail/test/GmailAutomationTest.java=UTF-8
+encoding/<project>=UTF-8
