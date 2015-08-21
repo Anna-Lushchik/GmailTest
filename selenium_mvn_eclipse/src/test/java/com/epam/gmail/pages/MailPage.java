@@ -11,6 +11,8 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.PageFactory;
+import org.openqa.selenium.support.ui.ExpectedCondition;
+import org.openqa.selenium.support.ui.WebDriverWait;
 
 import com.epam.gmail.steps.Steps;
 
@@ -63,8 +65,11 @@ public class MailPage extends AbstractPage {
 
 	private String openedMessageText = "//div[@class='a3s']";
 	
-	@FindBy(xpath = "//div[@class='a3s']/a")
-	private WebElement confirmForwardingLink;
+	@FindBy(xpath = "(//a[@rel='noreferrer'])[1]")
+	private WebElement confirmForwardingLink;	
+
+	@FindBy(xpath = "//input[@type='submit']")
+	private WebElement confirmForwardingButton;
 
 	@FindBy(xpath = "//div[@class='w-MH a6P']/span[1]")
 	private WebElement confirmVacationLink;
@@ -93,27 +98,21 @@ public class MailPage extends AbstractPage {
 
 	public void clickStarred() {
 		buttonStarred.click();
-		driver.manage().timeouts().pageLoadTimeout(10, TimeUnit.SECONDS);
 		driver.get(starredURL);
-		driver.navigate().refresh();
 		logger.info("In starred folder");
 	}
 
 	public void clickTrash() {
 		buttonElse.click();
 		buttonTrash.click();
-		driver.manage().timeouts().pageLoadTimeout(10, TimeUnit.SECONDS);
 		driver.get(trashURL);
-		driver.navigate().refresh();
 		logger.info("In trash folder");
 	}
 
 	public void clickSpam() {
 		buttonElse.click();
 		buttonSpam.click();
-		driver.manage().timeouts().pageLoadTimeout(10, TimeUnit.SECONDS);
 		driver.get(spamURL);
-		driver.navigate().refresh();
 		logger.info("In spam folder");
 	}
 
@@ -147,14 +146,21 @@ public class MailPage extends AbstractPage {
 
 	public void confirmForward() throws InterruptedException {
 		lastMessageLink.click();
+		String originalWindow = driver.getWindowHandle();
+		final Set<String> oldWindowsSet = driver.getWindowHandles();
 		confirmForwardingLink.click();
-		Set<String> handles = driver.getWindowHandles();
-		Thread.sleep(1500);
-		driver.switchTo()
-				.window(handles.toArray(new String[handles.size()])[0]);
-		driver.close();
-		driver.switchTo()
-				.window(handles.toArray(new String[handles.size()])[0]);
+		String newWindowHandle = (new WebDriverWait(driver, 10))
+				.until(new ExpectedCondition<String>() {
+					public String apply(WebDriver driver) {
+						Set<String> newWindowsSet = driver.getWindowHandles();
+						newWindowsSet.removeAll(oldWindowsSet);
+						return newWindowsSet.size() > 0 ? newWindowsSet
+								.iterator().next() : null;
+					}
+				});
+        driver.switchTo().window(newWindowHandle);
+        confirmForwardingButton.click();
+		driver.switchTo().window(originalWindow);
 	}
 
 	public ArrayList<String> openLastMessage() {

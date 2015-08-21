@@ -9,6 +9,9 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.PageFactory;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
+import org.openqa.selenium.support.ui.ExpectedCondition;
 
 public class ForwardPage extends SettingsPage {
 
@@ -17,6 +20,9 @@ public class ForwardPage extends SettingsPage {
 
 	@FindBy(xpath = "//a[@href='https://mail.google.com/mail/#settings/fwdandpop']")
 	private WebElement buttonForwarding;
+	
+	@FindBy(xpath = "//div[@class='rU']/button")
+	private WebElement saveChanges;
 
 	@FindBy(xpath = "//input[@act='add']")
 	private WebElement buttonAddForwardingAddress;
@@ -33,14 +39,14 @@ public class ForwardPage extends SettingsPage {
 	@FindBy(className = "J-at1-auR")
 	private WebElement buttonOkInConfirmForwardingAddress;
 
-	@FindBy(name = "sx_em")
+	@FindBy(xpath = "(//input[@name='sx_em'])[2]")
 	private WebElement forwardCopyRadiobutton;
-	
+
 	public ForwardPage(WebDriver driver) {
 		super(driver);
 		PageFactory.initElements(this.driver, this);
 	}
-	
+
 	@Override
 	public void openPage() {
 		driver.navigate().to(BASE_URL);
@@ -52,11 +58,21 @@ public class ForwardPage extends SettingsPage {
 		buttonForwarding.click();
 		buttonAddForwardingAddress.click();
 		fieldForwardingAddress.sendKeys(username);
+        String originalWindow = driver.getWindowHandle();
+		final Set<String> oldWindowsSet = driver.getWindowHandles();
 		buttonNextForwarding.click();
-		Thread.sleep(2500);
-		Set<String> handles = driver.getWindowHandles();
-		driver.switchTo().window(handles.toArray(new String[handles.size()])[0]);
-		confirmForwardingAddress.click();  //--
+		String newWindowHandle = (new WebDriverWait(driver, 10))
+				.until(new ExpectedCondition<String>() {
+					public String apply(WebDriver driver) {
+						Set<String> newWindowsSet = driver.getWindowHandles();
+						newWindowsSet.removeAll(oldWindowsSet);
+						return newWindowsSet.size() > 0 ? newWindowsSet
+								.iterator().next() : null;
+					}
+				});
+        driver.switchTo().window(newWindowHandle);
+		confirmForwardingAddress.click(); 
+		driver.switchTo().window(originalWindow);
 		buttonOkInConfirmForwardingAddress.click();
 	}
 
@@ -64,10 +80,7 @@ public class ForwardPage extends SettingsPage {
 		super.clickSettingsButton();
 		super.clickSettingsButtonFromDropdownMenu();
 		buttonForwarding.click();
-		if (!forwardCopyRadiobutton.isSelected()) {
-			forwardCopyRadiobutton.click();
-		}
-		driver.findElement(By.linkText(username)).click();
-		super.clickButtonSaveChanges();
+		forwardCopyRadiobutton.click();
+		saveChanges.click();;
 	}
 }

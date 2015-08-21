@@ -97,11 +97,10 @@ public class GmailAutomationTest {
 		steps.markLetterAsSpam(USERNAME_1, PASSWORD_1, USERNAME_2, PASSWORD_2);
 		assertTrue(steps.isTheSameLetter("theme", "message2"));
 	}
-
+	
 	@Ignore
 	@Test
 	public void testForward_2() throws InterruptedException, AWTException {
-		// trouble with switchTo window
 		steps.forwardLetter(USERNAME_1, PASSWORD_1, USERNAME_2, PASSWORD_2,
 				USERNAME_3, PASSWORD_3);
 		assertTrue(steps.isTheSameLetter("theme", "message2"));
@@ -132,7 +131,6 @@ public class GmailAutomationTest {
 	@Ignore
 	@Test
 	public void testThemes_4() throws InterruptedException, AWTException {
-		// not find buttonDownloadPhoto
 		steps.loginGmail(USERNAME_1, PASSWORD_1);
 		
 		settingsPage.clickSettingsButton();
@@ -142,10 +140,10 @@ public class GmailAutomationTest {
 		assertEquals(themeTitle, getElementText(locators.pathThemeTitle));
 		
 		themePage.clickButtonMyPhotos();
-		//waitElement = (new WebDriverWait(driver, 10)).until(ExpectedConditions.presenceOfElementLocated(By.xpath(locators.pathSelectThemeTitle)));
-		//assertEquals(themeSelectTitle, getElementText(locators.pathSelectThemeTitle));
+		new WebDriverWait(driver,60).until(ExpectedConditions.presenceOfElementLocated(By.xpath(locators.pathSelectThemeTitle)));  
+		assertEquals(themeSelectTitle, getElementText(locators.pathSelectThemeTitle));
 		
-		themePage.clickButtonDownloadPhoto();  //-
+		themePage.clickButtonDownloadPhoto();  
 		themePage.clickButtonSelectFileOnComputer();
 
 		utils.createNewFileWithWrongExtension("DSC.NEF");

@@ -87,7 +87,7 @@ public class Locators {
 	
 	protected String GoogleTitleOnLoginPage = "//div[@class='banner']";
 	
-	protected String fieldWhom = "//table[@class='GS']/tbody/tr/td[2]/div/div/div/span";
+	protected String fieldWhom = "//div[@class='vT']";
 	
 	protected String fieldTheme = "//div[@class='Hp']/h2/div[2]";
 	

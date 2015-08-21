@@ -38,7 +38,6 @@ public class Steps {
 
 	public static void deleteCookies() throws InterruptedException {
 		driver.manage().deleteAllCookies();
-		Thread.sleep(1000);
 		driver.navigate().refresh();
 	}
 
@@ -46,23 +45,17 @@ public class Steps {
 		LoginPage loginPage = new LoginPage(driver);
 		loginPage.openPage();
 		loginPage.login(username, password);
-		driver.manage().timeouts().pageLoadTimeout(10, TimeUnit.SECONDS);
-		driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
 	}
 
 	public static void changeLoginNameGmail(String username, String password) {
 		LoginPage loginPage = new LoginPage(driver);
 		loginPage.changeLogin(username, password);
-		driver.manage().timeouts().pageLoadTimeout(10, TimeUnit.SECONDS);
-		driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
 	}
 
 	public static void changeLoginWhenTwoOrMoreNameGmail(String username,
 			String password) {
 		LoginPage loginPage = new LoginPage(driver);
 		loginPage.changeLoginWhenTwoOrMoreName(username, password);
-		driver.manage().timeouts().pageLoadTimeout(10, TimeUnit.SECONDS);
-		driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
 	}
 
 	public void markLetterAsSpam(String username1, String password1,
