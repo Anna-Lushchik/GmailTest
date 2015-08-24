@@ -3,7 +3,6 @@ package com.epam.gmail.pages;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
-import java.util.concurrent.TimeUnit;
 
 import org.apache.log4j.Logger;
 import org.openqa.selenium.By;
@@ -12,9 +11,8 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.PageFactory;
 import org.openqa.selenium.support.ui.ExpectedCondition;
+import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
-
-import com.epam.gmail.steps.Steps;
 
 import java.util.NoSuchElementException;
 
@@ -59,13 +57,17 @@ public class MailPage extends AbstractPage {
 	@FindBy(xpath = "//div[@class='xS']")
 	private WebElement lastMessageLink;
 
-	private String lastMessageSubject = "(//div[@class='yW'])[1]";
+	@FindBy(xpath = "(//div[@class='yW'])[1]")
+	private WebElement lastMessageSubject;
 
-	private String lastMessageText = "//div[@class='y6']";
+	@FindBy(xpath = "//div[@class='y6']")
+	private WebElement lastMessageText;
 
-	private String openedMessageSubject = "//h2[@class='hP']";
+	@FindBy(xpath = "//h2[@class='hP']")
+	private WebElement openedMessageSubject;
 
-	private String openedMessageText = "//div[@class='a3s']";
+	@FindBy(xpath = "//div[@class='a3s']")
+	private WebElement openedMessageText;
 
 	@FindBy(xpath = "(//a[@rel='noreferrer'])[1]")
 	private WebElement confirmForwardingLink;
@@ -76,39 +78,32 @@ public class MailPage extends AbstractPage {
 	@FindBy(xpath = "//div[@class='w-MH a6P']/span[1]")
 	private WebElement confirmVacationLink;
 
+	@FindBy(xpath = "//img[@class='yE']")
+	private WebElement pathToAttributeMessage;
+
+	@FindBy(xpath = "//span[@class='Kj-JD-K7-K0']")
+	private WebElement pathToMessageSizeAttach;
+
+	@FindBy(xpath = "//div[@class='Cp']")
+	private String listOfLetters;
+
+	@FindBy(xpath = "//div[@class='nH if']")
+	private String openedLetterWindow;
+
+	@FindBy(xpath = "//div[@dir='J-J5-Ji']")
+	private WebElement signature;
+
+	@FindBy(xpath = "(//span[@class='aXw T-KT'])[1]")
+	private WebElement lastLetterStar;
+
 	private String starredURL = "https://mail.google.com/mail/#starred";
-
 	private String trashURL = "https://mail.google.com/mail/#trash";
-
 	private String spamURL = "https://mail.google.com/mail/#spam";
 
 	private String attributeAlt = "alt";
-	private String attributeHidefocus = "hidefocus";
-	private String attributeGoomoji = "goomoji";
 	private String attach = "Attachment";
 	private String messageSizeAttach = "The file that you are trying to send exceeds the 25 MB attachment limit.";
-	private String themeTitle = "Pick your theme";
-	private String themeSelectTitle = "Select your background image";
-	private String messageTipeUploadFile = "Selected file [DSC.NEF] is not supported for upload.";
-	private String settingsTitle = "Settings";
-	private String generalTitle = "General";
-	private String newMessage = "New Message";
-	private String newShortcut = "New Label";
-	private String parentShortcut = "My shortcut";
-	private String insertedShortcut = "My inserted shortcut";
-	private String deleteShortcutsTitle = "Remove Labels";
 	private String selected = "Starred";
-	private String starred = "starred";
-	private String subject = "subject";
-	private String choosenTheme = "//ssl.gstatic.com/ui/v1/icons/mail/themes/beach2/";
-
-	String pathToAttributeMessage = "//img[@class='yE']";
-	String pathToMessageSizeAttach = "//span[@class='Kj-JD-K7-K0']";
-	String listOfLetters = "//div[@class='Cp']";
-	String lastLetterCheckbox = "(//div[@class='T-Jo-auh'])[2]";
-	String openedLetterWindow = "//div[@class='nH if']";
-	String signature = "//div[@dir='J-J5-Ji']";
-	String lastLetterStar = "(//span[@class='aXw T-KT'])[1]";
 
 	public MailPage(WebDriver driver) {
 		super(driver);
@@ -153,9 +148,8 @@ public class MailPage extends AbstractPage {
 
 	public List<String> chooseTopItem() {
 		List<String> letterText = new ArrayList<String>();
-		letterText.add(driver.findElement(By.xpath(lastMessageSubject))
-				.getText());
-		letterText.add(driver.findElement(By.xpath(lastMessageText)).getText());
+		letterText.add(lastMessageSubject.getText());
+		letterText.add(lastMessageText.getText());
 		lastMessageCheckbox.click();
 		logger.info("Choose top item");
 		return letterText;
@@ -168,9 +162,8 @@ public class MailPage extends AbstractPage {
 
 	public List<String> clickStar() {
 		List<String> letterText = new ArrayList<String>();
-		letterText.add(driver.findElement(By.xpath(lastMessageSubject))
-				.getText());
-		letterText.add(driver.findElement(By.xpath(lastMessageText)).getText());
+		letterText.add(lastMessageSubject.getText());
+		letterText.add(lastMessageText.getText());
 		lastMessageStar.click();
 		logger.info("Mark letter by star");
 		return letterText;
@@ -198,10 +191,8 @@ public class MailPage extends AbstractPage {
 	public List<String> openLastMessage() {
 		lastMessageLink.click();
 		List<String> letterText = new ArrayList<String>();
-		letterText.add(driver.findElement(By.xpath(openedMessageSubject))
-				.getText());
-		letterText.add(driver.findElement(By.xpath(openedMessageText))
-				.getText());
+		letterText.add(openedMessageSubject.getText());
+		letterText.add(openedMessageText.getText());
 		return letterText;
 	}
 
@@ -211,7 +202,6 @@ public class MailPage extends AbstractPage {
 
 	public boolean hasGotAutoAnswerWithVacationEnteredData(String theme,
 			String message) throws InterruptedException {
-		Steps steps = new Steps();
 		for (int i = 0; i <= 50 || isTheSameLetter(theme, message); i++) {
 			Thread.sleep(300);
 		}
@@ -225,15 +215,12 @@ public class MailPage extends AbstractPage {
 	}
 
 	public boolean hasTestableLetterInSpam(String theme, String message) {
-		Steps steps = new Steps();
 		return isTheSameLetter(theme, message);
 	}
 
 	public boolean testableLetterMarkWithAttach(String theme, String message) {
 		boolean result = false;
-		Steps steps = new Steps();
-		if (getElementAtribute(pathToAttributeMessage, attributeAlt).contains(
-				attach)
+		if (pathToAttributeMessage.getAttribute(attributeAlt).contains(attach)
 				&& isTheSameLetter(theme, message)) {
 			result = true;
 		}
@@ -241,8 +228,7 @@ public class MailPage extends AbstractPage {
 	}
 
 	public boolean hasWarningMessageAboutSizeFile() {
-		return getElementText(pathToMessageSizeAttach)
-				.equals(messageSizeAttach);
+		return pathToMessageSizeAttach.getText().equals(messageSizeAttach);
 	}
 
 	public boolean listOfLettersAppears() {
@@ -250,15 +236,16 @@ public class MailPage extends AbstractPage {
 	}
 
 	public boolean testableItemIsSelected() {
-		return getElementAtribute(lastLetterCheckbox, "aria-checked").equals(
-				"true");
+		return lastMessageCheckbox.getAttribute("aria-checked").equals("true");
 	}
 
 	public boolean testableItemIsStarred() {
-		return getElementAtribute(lastLetterStar, "title").equals(selected);
+		return lastLetterStar.getAttribute("title").equals(selected);
 	}
 
-	public boolean testableItemRemoved(List chosenLetter) {
+	public boolean testableItemRemoved(List<String> chosenLetter) {
+		new WebDriverWait(driver, 60).until(ExpectedConditions
+				.presenceOfElementLocated(By.xpath(openedLetterWindow)));
 		return isElementPresent("//div[text()='" + chosenLetter.get(1) + "']");
 	}
 
@@ -267,7 +254,7 @@ public class MailPage extends AbstractPage {
 	}
 
 	public boolean newMessageHasSignature(String signatureText) {
-		return getElementText(signature).equals(signatureText);
+		return signature.getText().equals(signatureText);
 	}
 
 	public String getElementText(String locator) {
@@ -276,10 +263,6 @@ public class MailPage extends AbstractPage {
 		} catch (NoSuchElementException e) {
 			return null;
 		}
-	}
-
-	public boolean isElementPresent(String locator) {
-		return driver.findElements(By.xpath(locator)).size() > 0;
 	}
 
 	public String getElementAtribute(String locator, String atribute) {
@@ -292,12 +275,14 @@ public class MailPage extends AbstractPage {
 
 	public boolean isTheSameLetter(String subject, String message) {
 		boolean sameLetter = false;
-		if (driver.findElement(By.xpath(lastMessageSubject)).getText()
-				.equals(subject)
-				&& driver.findElement(By.xpath(lastMessageText)).getText()
-						.contains(message)) {
+		if (lastMessageSubject.getText().equals(subject)
+				&& lastMessageText.getText().contains(message)) {
 			sameLetter = true;
 		}
 		return sameLetter;
+	}
+
+	public boolean isElementPresent(String locator) {
+		return driver.findElements(By.xpath(locator)).size() > 0;
 	}
 }

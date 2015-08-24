@@ -13,8 +13,8 @@ import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.PageFactory;
 
 import com.epam.gmail.utils.Utils;
+
 import java.util.NoSuchElementException;
-import javax.security.auth.Subject;
 
 public class SendLetterPage extends AbstractPage {
 
@@ -51,22 +51,31 @@ public class SendLetterPage extends AbstractPage {
 	@FindBy(className = "a8o")
 	private WebElement buttonSmileyClose;
 
-	private String signature = "//div[@dir='J-J5-Ji']";
-
 	@FindBy(xpath = "//div[@class='T-I J-J5-Ji aoO T-I-atl L3']")
 	private WebElement buttonSend;
+
+	@FindBy(xpath = "//div[@class='aYF']")
+	private WebElement pathNewMessage;
+
+	@FindBy(xpath = "(//div[@class='wVboN'])[1]")
+	private WebElement emoticonsWindow;
+
+	@FindBy(xpath = "(//img[@class='CToWUd'])")
+	private WebElement pathToTextMessage;
+
+	@FindBy(xpath = "//div[@class='vT']")
+	private WebElement whomField;
+
+	@FindBy(xpath = "//div[@class='Hp']/h2/div[2]")
+	private WebElement themeField;
+
+	private String signature = "//div[@dir='J-J5-Ji']";
+
+	private String pathToMessageField = "//div[@class='Am Al editable LW-avf']/";
 
 	private String attributeString = "string";
 	private String attributeGoomoji = "goomoji";
 	private String newMessage = "New Message";
-
-	String pathNewMessage = "//div[@class='aYF']";
-	String emoticonsWindow = "(//div[@class='wVboN'])[1]";
-	String pathToMessageField = "//div[@class='Am Al editable LW-avf']/";
-	String pathToTextMessage = "(//img[@class='CToWUd'])";
-	String Whom = "//div[@class='vT']";
-	String Theme = "//div[@class='Hp']/h2/div[2]";
-	String Message = "//div[@class='Am Al editable LW-avf']";
 
 	public SendLetterPage(WebDriver driver) {
 		super(driver);
@@ -140,22 +149,18 @@ public class SendLetterPage extends AbstractPage {
 	}
 
 	public boolean messageHasSignature() {
-		return driver.findElements(By.xpath(signature)).size() > 0;
-	}
-
-	public boolean isElementPresent(String locator) {
-		return driver.findElements(By.xpath(locator)).size() > 0;
+		return isElementPresent(signature);
 	}
 
 	public boolean windowNewMessageAppears() {
-		return getElementText(pathNewMessage).equals(newMessage);
+		return pathNewMessage.getText().equals(newMessage);
 	}
 
 	public boolean windowEmoticonsAppears() {
-		return isElementDisplayed(emoticonsWindow);
+		return emoticonsWindow.isDisplayed();
 	}
 
-	public boolean hasChoosenEmoticons(List listSmiley) {
+	public boolean hasChoosenEmoticons(List<String> listSmiley) {
 		return getElementAtribute(pathToMessageField + "img[" + 1 + "]",
 				attributeGoomoji).equals(listSmiley.get(0))
 				&& getElementAtribute(pathToMessageField + "img[" + 1 + "]",
@@ -163,10 +168,10 @@ public class SendLetterPage extends AbstractPage {
 	}
 
 	public boolean windowNewMessageDisplayed() {
-		return isElementDisplayed(pathNewMessage);
+		return pathNewMessage.isDisplayed();
 	}
 
-	public boolean hasSentEmoticonsAtTheMail(List listSmiley) {
+	public boolean hasSentEmoticonsAtTheMail(List<String> listSmiley) {
 		return getElementAtribute(pathToTextMessage + "[1]", attributeGoomoji)
 				.equals(listSmiley.get(0))
 				&& getElementAtribute(pathToTextMessage + "[2]",
@@ -175,25 +180,9 @@ public class SendLetterPage extends AbstractPage {
 
 	public boolean fildsInNewMessageWasFilledCorrectInformation(
 			String username, String subject, String message) {
-		return getElementAtribute(Whom, "email").equals(username)
-				&& getElementText(Theme).equals(subject)
-				&& getElementText(Message).equals(message);
-	}
-
-	public boolean isElementDisplayed(String locator) {
-		try {
-			return driver.findElement(By.xpath(locator)).isDisplayed();
-		} catch (NoSuchElementException e) {
-			return false;
-		}
-	}
-
-	public String getElementText(String locator) {
-		try {
-			return driver.findElement(By.xpath(locator)).getText();
-		} catch (NoSuchElementException e) {
-			return null;
-		}
+		return whomField.getAttribute("email").equals(username)
+				&& themeField.getText().equals(subject)
+				&& fieldMessage.getText().equals(message);
 	}
 
 	public String getElementAtribute(String locator, String atribute) {
@@ -202,5 +191,9 @@ public class SendLetterPage extends AbstractPage {
 		} catch (NoSuchElementException e) {
 			return null;
 		}
+	}
+
+	public boolean isElementPresent(String locator) {
+		return driver.findElements(By.xpath(locator)).size() > 0;
 	}
 }

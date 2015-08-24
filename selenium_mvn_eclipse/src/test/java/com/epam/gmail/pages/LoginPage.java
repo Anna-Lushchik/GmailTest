@@ -33,10 +33,11 @@ public class LoginPage extends AbstractPage {
 	@FindBy(id = "account-chooser-add-account")
 	private WebElement addAccount;
 
+	@FindBy(xpath = "//div[@class='banner']")
+	private String GoogleTitleOnLoginPage;
+
 	private String advertising1 = "https://www.gmail.com/intl/en/mail/help/about.html";
 	private String advertising2 = "https://www.gmail.com/intl/en/mail/help/about.html#inbox";
-
-	String GoogleTitleOnLoginPage = "//div[@class='banner']";
 
 	public LoginPage(WebDriver driver) {
 		super(driver);
@@ -88,5 +89,4 @@ public class LoginPage extends AbstractPage {
 	public boolean isElementPresent(String locator) {
 		return driver.findElements(By.xpath(locator)).size() > 0;
 	}
-
 }

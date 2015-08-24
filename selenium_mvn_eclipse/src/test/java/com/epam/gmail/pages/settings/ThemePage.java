@@ -1,6 +1,5 @@
 package com.epam.gmail.pages.settings;
 
-import java.util.NoSuchElementException;
 import org.apache.log4j.Logger;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
@@ -36,17 +35,23 @@ public class ThemePage extends SettingsPage {
 	@FindBy(className = "J-J5-Ji T-I T-I-atl")
 	private WebElement buttonSaveTheme;
 
+	@FindBy(xpath = "//span[@class='Kj-JD-K7-K0']")
+	private WebElement pathThemeTitle;
+
+	@FindBy(xpath = "//div[@class='Xf-cg-fc Xf-Ke-lf']")
+	private WebElement pathSelectThemeTitle;
+
+	@FindBy(xpath = "//div[@style='margin-top: 27px;']")
+	private WebElement pathToMessageTipeUploadFile;
+
+	@FindBy(xpath = "//div[@class='a4t']/img")
+	private WebElement pathToChoosenTheme;
+
 	private String themeTitle = "Pick your theme";
 	private String themeSelectTitle = "Select your background image";
 	private String messageTipeUploadFile = "Selected file [DSC.NEF] is not supported for upload.";
 	private String attributeHidefocus = "hidefocus";
 	private String choosenTheme = "//ssl.gstatic.com/ui/v1/icons/mail/themes/beach2/";
-	
-	String pathThemeTitle = "//span[@class='Kj-JD-K7-K0']";
-	String pathSelectThemeTitle = "//div[@class='Xf-cg-fc Xf-Ke-lf']";
-	String pathToMessageTipeUploadFile = "//div[@style='margin-top: 27px;']";
-	String theme = "//a[@href='https://mail.google.com/mail/#settings/oldthemes']";
-	String pathToChoosenTheme = "//div[@class='a4t']/img";
 
 	public ThemePage(WebDriver driver) {
 		super(driver);
@@ -56,7 +61,6 @@ public class ThemePage extends SettingsPage {
 	@Override
 	public void openPage() {
 		driver.navigate().to(BASE_URL);
-		logger.info("Inbox page opened");
 	}
 
 	public void changeThemes() {
@@ -87,44 +91,27 @@ public class ThemePage extends SettingsPage {
 	}
 
 	public boolean windowThemesAppears() {
-		return getElementText(pathThemeTitle).equals(themeTitle);
+		return pathThemeTitle.getText().equals(themeTitle);
 	}
 
 	public boolean windowSelectYourBackgroundImageAppears() {
 		new WebDriverWait(driver, 60).until(ExpectedConditions
-				.presenceOfElementLocated(By.xpath(pathSelectThemeTitle)));
-		return getElementText(pathSelectThemeTitle).equals(themeSelectTitle);
+				.presenceOfElementLocated((By) pathSelectThemeTitle));
+		return pathSelectThemeTitle.getText().equals(themeSelectTitle);
 	}
 
 	public boolean hasWarningMessageAboutTypeFile() {
-		return getElementText(pathToMessageTipeUploadFile).equals(
+		return pathToMessageTipeUploadFile.getText().equals(
 				messageTipeUploadFile);
 	}
 
 	public boolean themeSettingsPageAppears() {
 		new WebDriverWait(driver, 60).until(ExpectedConditions
-				.presenceOfElementLocated(By.xpath(theme)));
-		return getElementAtribute(theme, attributeHidefocus).contains("true");
+				.presenceOfElementLocated((By) buttonThemes));
+		return buttonThemes.getAttribute(attributeHidefocus).contains("true");
 	}
 
 	public boolean backgroundChangedToChoosenTheme() {
-		return getElementAtribute(pathToChoosenTheme, "src").contains(
-				choosenTheme);
-	}
-
-	public String getElementText(String locator) {
-		try {
-			return driver.findElement(By.xpath(locator)).getText();
-		} catch (NoSuchElementException e) {
-			return null;
-		}
-	}
-
-	public String getElementAtribute(String locator, String atribute) {
-		try {
-			return driver.findElement(By.xpath(locator)).getAttribute(atribute);
-		} catch (NoSuchElementException e) {
-			return null;
-		}
+		return pathToChoosenTheme.getAttribute("src").contains(choosenTheme);
 	}
 }

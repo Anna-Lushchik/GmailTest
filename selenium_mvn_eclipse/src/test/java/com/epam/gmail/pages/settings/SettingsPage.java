@@ -7,7 +7,6 @@ import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.PageFactory;
 
 import com.epam.gmail.pages.AbstractPage;
-import java.util.NoSuchElementException;
 import org.openqa.selenium.By;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
@@ -29,11 +28,13 @@ public class SettingsPage extends AbstractPage {
 	@FindBy(xpath = "//button[@guidedhelpid='save_changes_button']")
 	private WebElement buttonSaveChanges;
 
+	@FindBy(xpath = "//div[@class='J-M asi aYO jQjAxd']/div")
+	private WebElement settingsDropdownList;
+
+	@FindBy(xpath = "//h2[@class='dt']")
+	private WebElement pathSettingsTitle;
+
 	private String settingsTitle = "Settings";
-	
-	String settingsDropdownList = "//div[@class='J-M asi aYO jQjAxd']/div";
-	String pathSettingsTitle = "//h2[@class='dt']";
-	String saveChanges = "//button[@guidedhelpid='save_changes_button']";
 
 	public SettingsPage(WebDriver driver) {
 		super(driver);
@@ -64,40 +65,16 @@ public class SettingsPage extends AbstractPage {
 	}
 
 	public boolean hasDropDownListSettings() {
-		return isElementDisplayed(settingsDropdownList);
+		return settingsDropdownList.isDisplayed();
 	}
 
 	public boolean settingsWasOpened() {
 		new WebDriverWait(driver, 60).until(ExpectedConditions
-				.presenceOfElementLocated(By.xpath(pathSettingsTitle)));
-		return getElementText(pathSettingsTitle).equals(settingsTitle);
+				.presenceOfElementLocated((By) pathSettingsTitle));
+		return pathSettingsTitle.getText().equals(settingsTitle);
 	}
 
 	public boolean buttonSaveChangesAvailable() {
-		return isElementEnabled(saveChanges);
-	}
-
-	public boolean isElementDisplayed(String locator) {
-		try {
-			return driver.findElement(By.xpath(locator)).isDisplayed();
-		} catch (NoSuchElementException e) {
-			return false;
-		}
-	}
-
-	public String getElementText(String locator) {
-		try {
-			return driver.findElement(By.xpath(locator)).getText();
-		} catch (NoSuchElementException e) {
-			return null;
-		}
-	}
-
-	public boolean isElementEnabled(String locator) {
-		try {
-			return driver.findElement(By.xpath(locator)).isEnabled();
-		} catch (NoSuchElementException e) {
-			return false;
-		}
+		return buttonSaveChanges.isEnabled();
 	}
 }

@@ -4,7 +4,6 @@ import java.awt.AWTException;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.log4j.Logger;
-import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
 
@@ -16,9 +15,6 @@ public class Steps {
 
 	private final Logger logger = Logger.getLogger(Steps.class);
 	private static WebDriver driver;
-
-	String lastMessageSubject = "(//div[@class='yW'])[1]";
-	String lastMessageText = "//div[@class='y6']";
 
 	public Steps() {
 	}
@@ -125,5 +121,4 @@ public class Steps {
 		Steps.loginGmail(username1, password1);
 		sendLetterPage.writeNewMessageWithAttach(username1, "theme", "message");
 	}
-
 }

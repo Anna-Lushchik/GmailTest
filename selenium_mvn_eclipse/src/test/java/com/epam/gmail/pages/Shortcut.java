@@ -1,6 +1,5 @@
 package com.epam.gmail.pages;
 
-import java.util.NoSuchElementException;
 import org.apache.log4j.Logger;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
@@ -8,6 +7,8 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.PageFactory;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
 
 public class Shortcut extends AbstractPage {
 
@@ -71,19 +72,24 @@ public class Shortcut extends AbstractPage {
 	@FindBy(xpath = "(//span[@class='ajP'])[2]")
 	private WebElement nestedShortcut;
 
+	@FindBy(xpath = "//div[@class='J-M J-M-ayU aka']")
+	private WebElement shortcutMenu;
+
+	@FindBy(xpath = "//div[@class='J-M J-M-ayU aka']")
+	private String shortcutMenuPath;
+
+	@FindBy(xpath = "//span[@class='Kj-JD-K7-K0']")
+	private WebElement changeShortcutTitle;
+
+	@FindBy(xpath = "//div[@class='JA-Kn-Jr-Kw']")
+	private String colorsShortcutMenu;
+
+	@FindBy(xpath = "//div[@class='Kj-JD']")
+	private String changeShortcutWindow;
+
 	private String attributeStyle = "style";
 	private String newShortcut = "New Label";
-	private String parentShortcutName = "My shortcut";
-	private String insertedShortcutName = "My inserted shortcut";
 	private String deleteShortcutsTitle = "Remove Labels";
-
-	String shortcutMenu = "//div[@class='J-M J-M-ayU aka']";
-	String createShortcutTitle = "//span[@class='Kj-JD-K7-K0']";
-	String createShortcutWindow = "//div[@class='J-M J-M-ayU aka']";
-	String colorsShortcutMenu = "//div[@class='JA-Kn-Jr-Kw']";
-	String changeColorsShortcutWindow = "//div[@class='Kj-JD']";
-	String deleteShortcutsWindow = "//div[@class='Kj-JD']";
-	String pathDeleteShortcutsTitle = "//span[@class='Kj-JD-K7-K0']";
 
 	public Shortcut(WebDriver driver) {
 		super(driver);
@@ -176,15 +182,15 @@ public class Shortcut extends AbstractPage {
 	}
 
 	public boolean shortcutMenuAppears() {
-		return isElementPresent(shortcutMenu);
+		return isElementPresent(shortcutMenuPath);
 	}
 
 	public boolean dialogNewShortcutAppears() {
-		return getElementText(createShortcutTitle).equals(newShortcut);
+		return changeShortcutTitle.getText().equals(newShortcut);
 	}
 
 	public boolean windowNewShortcutDisplayed() {
-		return isElementDisplayed(createShortcutWindow);
+		return shortcutMenu.isDisplayed();
 	}
 
 	public boolean colourVariantsAppear() {
@@ -192,35 +198,20 @@ public class Shortcut extends AbstractPage {
 	}
 
 	public boolean dialogChangeColourShortcutsAppears() {
-		return isElementPresent(changeColorsShortcutWindow);
+		return isElementPresent(changeShortcutWindow);
 	}
 
 	public boolean dialogDeleteShortcutsAppears() {
-		boolean result = isElementPresent(deleteShortcutsWindow);
+		new WebDriverWait(driver, 60).until(ExpectedConditions
+				.invisibilityOfElementLocated(By.xpath(changeShortcutWindow)));
+		boolean result = isElementPresent(changeShortcutWindow);
 		if (result) {
-			result = getElementText(pathDeleteShortcutsTitle).equals(
-					deleteShortcutsTitle);
+			result = changeShortcutTitle.getText().equals(deleteShortcutsTitle);
 		}
 		return result;
 	}
 
 	public boolean isElementPresent(String locator) {
 		return driver.findElements(By.xpath(locator)).size() > 0;
-	}
-
-	public String getElementText(String locator) {
-		try {
-			return driver.findElement(By.xpath(locator)).getText();
-		} catch (NoSuchElementException e) {
-			return null;
-		}
-	}
-
-	public boolean isElementDisplayed(String locator) {
-		try {
-			return driver.findElement(By.xpath(locator)).isDisplayed();
-		} catch (NoSuchElementException e) {
-			return false;
-		}
 	}
 }

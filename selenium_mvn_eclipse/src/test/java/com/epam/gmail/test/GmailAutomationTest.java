@@ -5,7 +5,6 @@ import static org.junit.Assert.*;
 import java.awt.AWTException;
 import java.util.Date;
 import java.util.List;
-import java.util.NoSuchElementException;
 
 import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
@@ -13,10 +12,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
-import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.support.ui.ExpectedConditions;
-import org.openqa.selenium.support.ui.WebDriverWait;
 
 import com.epam.gmail.pages.*;
 import com.epam.gmail.pages.settings.*;
@@ -50,9 +46,12 @@ public class GmailAutomationTest {
 	private String insertedShortcut = "My inserted shortcut";
 	private String starred = "starred";
 	private String subject = "subject";
+	private String message = "message";
+	private String theme = "theme";
+	private String fileWithNotImageExtension = "DSC.NEF";
 	protected String themeBeach = "//div[@aria-label='Beach (by: iStockPhoto)']";
-	protected String deleteShortcutsWindow = "//div[@class='Kj-JD']";
-	protected String openedLetterWindow = "//div[@class='nH if']";
+	private String spam = "spam";
+	private String inbox = "inbox";
 
 	@Before
 	public void setUp() throws Exception {
@@ -76,9 +75,9 @@ public class GmailAutomationTest {
 
 	@Ignore
 	@Test
-	public void testMarkLetterAsSpam() {
+	public void testSecondLetterInSpamAfterFirstLetterMarkedAsSpam() {
 		steps.markLetterAsSpam(USERNAME_1, PASSWORD_1, USERNAME_2, PASSWORD_2);
-		assertTrue(mailPage.hasTestableLetterInSpam("theme", "message2"));
+		assertTrue(mailPage.hasTestableLetterInSpam(theme, "message2"));
 	}
 
 	@Ignore
@@ -86,13 +85,13 @@ public class GmailAutomationTest {
 	public void testCreateForwardAndFilter() throws AWTException {
 		steps.forwardLetter(USERNAME_1, PASSWORD_1, USERNAME_2, PASSWORD_2,
 				USERNAME_3, PASSWORD_3);
-		assertFalse(mailPage.testableLetterMarkWithAttach("theme", "message"));
+		assertFalse(mailPage.testableLetterMarkWithAttach(theme, message));
 
 		mailPage.clickTrash();
-		assertTrue(mailPage.testableLetterMarkWithAttach("theme", "message"));
+		assertTrue(mailPage.testableLetterMarkWithAttach(theme, message));
 
 		steps.changeLoginWhenTwoOrMoreNameGmail(USERNAME_3, PASSWORD_3);
-		assertFalse(mailPage.testableLetterMarkWithAttach("theme", "message"));
+		assertFalse(mailPage.testableLetterMarkWithAttach(theme, message));
 	}
 
 	@Ignore
@@ -118,8 +117,8 @@ public class GmailAutomationTest {
 		themePage.clickButtonDownloadPhoto();
 		themePage.clickButtonSelectFileOnComputer();
 
-		utils.createNewFileWithWrongExtension("DSC.NEF");
-		utils.uploadFile("DSC.NEF");
+		utils.createNewFileWithWrongExtension(fileWithNotImageExtension);
+		utils.uploadFile(fileWithNotImageExtension);
 		assertTrue(themePage.hasWarningMessageAboutTypeFile());
 	}
 
@@ -135,7 +134,7 @@ public class GmailAutomationTest {
 		sendLetterPage.clickEmoticonIcon();
 		assertTrue(sendLetterPage.windowEmoticonsAppears());
 
-		List listSmiley = sendLetterPage.chooseEmoticons();
+		List<String> listSmiley = sendLetterPage.chooseEmoticons();
 		assertTrue(sendLetterPage.hasChoosenEmoticons(listSmiley));
 		assertFalse(sendLetterPage.windowEmoticonsAppears());
 
@@ -213,8 +212,7 @@ public class GmailAutomationTest {
 
 		shortcut.presenceBothShortcuts(parentShortcut, insertedShortcut);
 		shortcut.buttonConfirmDeleteShortcut();
-		new WebDriverWait(driver, 60).until(ExpectedConditions
-				.invisibilityOfElementLocated(By.xpath(deleteShortcutsWindow)));
+
 		assertFalse(shortcut.dialogDeleteShortcutsAppears());
 
 		boolean checkDelete = shortcut.shortcutsDeleted();
@@ -227,7 +225,7 @@ public class GmailAutomationTest {
 	public void testMarkItemAsSpamAndMarkSpamItemAsNotSpam() {
 		steps.loginGmail(USERNAME_1, PASSWORD_1);
 		mailPage.clickInbox();
-		assertTrue(driver.getCurrentUrl().contains("inbox"));
+		assertTrue(driver.getCurrentUrl().contains(inbox));
 		assertTrue(mailPage.listOfLettersAppears());
 
 		List<String> chosenLetter = mailPage.chooseTopItem();
@@ -237,21 +235,18 @@ public class GmailAutomationTest {
 		assertFalse(mailPage.testableItemRemoved(chosenLetter));
 
 		mailPage.clickSpam();
-		assertTrue(driver.getCurrentUrl().contains("spam"));
+		assertTrue(driver.getCurrentUrl().contains(spam));
 		assertTrue(mailPage.listOfLettersAppears());
 
 		List<String> letter = mailPage.openLastMessage();
 		assertTrue(mailPage.testableItemIsOpened());
 
 		mailPage.clickNotSpam();
-		new WebDriverWait(driver, 60).until(ExpectedConditions
-				.presenceOfElementLocated(By.xpath(openedLetterWindow)));
-		;
-		assertTrue(driver.getCurrentUrl().contains("spam"));
+		assertTrue(driver.getCurrentUrl().contains(spam));
 		assertFalse(mailPage.testableItemRemoved(chosenLetter));
 
 		mailPage.clickInbox();
-		assertTrue(driver.getCurrentUrl().contains("inbox"));
+		assertTrue(driver.getCurrentUrl().contains(inbox));
 		assertTrue(mailPage.listOfLettersAppears());
 
 		assertTrue(chosenLetter.contains(letter));
@@ -300,7 +295,6 @@ public class GmailAutomationTest {
 	@Ignore
 	@Test
 	public void testCreateVacation() throws InterruptedException {
-		Date date = new Date();
 		steps.loginGmail(USERNAME_3, PASSWORD_3);
 		settingsPage.clickSettingsButton();
 		settingsPage.clickSettingsButtonFromDropdownMenu();
@@ -309,7 +303,7 @@ public class GmailAutomationTest {
 		generalPage.chooseVacationResponderOnRadiobutton();
 		assertTrue(generalPage.vacationResponderOnSelected());
 
-		generalPage.enterDataVacationResponder(subject, "message");
+		generalPage.enterDataVacationResponder(subject, message);
 		settingsPage.clickButtonSaveChanges();
 		assertTrue(generalPage.enteredSubjectPresentAtTheTopOfNewPage(subject));
 
@@ -322,59 +316,14 @@ public class GmailAutomationTest {
 		assertTrue(sendLetterPage.windowNewMessageAppears());
 
 		sendLetterPage.writeNewMessageWithoutAttach(USERNAME_3, "Test14",
-				"message");
+				message);
 		assertTrue(sendLetterPage.fildsInNewMessageWasFilledCorrectInformation(
-				USERNAME_3, "Test14", "message"));
+				USERNAME_3, "Test14", message));
 		sendLetterPage.clickSendButton();
 
 		boolean checkVacation = mailPage
-				.hasGotAutoAnswerWithVacationEnteredData("Test14", "message");
+				.hasGotAutoAnswerWithVacationEnteredData("Test14", message);
 		logger.info("you get auto-answer with vacation entered data - "
 				+ checkVacation);
 	}
-
-	public boolean isElementPresent(String locator) {
-		return driver.findElements(By.xpath(locator)).size() > 0;
-	}
-
-	public String getElementText(String locator) {
-		try {
-			return driver.findElement(By.xpath(locator)).getText();
-		} catch (NoSuchElementException e) {
-			return null;
-		}
-	}
-
-	public boolean isElementDisplayed(String locator) {
-		try {
-			return driver.findElement(By.xpath(locator)).isDisplayed();
-		} catch (NoSuchElementException e) {
-			return false;
-		}
-	}
-
-	public boolean isElementSelected(String locator) {
-		try {
-			return driver.findElement(By.xpath(locator)).isSelected();
-		} catch (NoSuchElementException e) {
-			return false;
-		}
-	}
-
-	public boolean isElementEnabled(String locator) {
-		try {
-			return driver.findElement(By.xpath(locator)).isEnabled();
-		} catch (NoSuchElementException e) {
-			return false;
-		}
-	}
-
-	public String getElementAtribute(String locator, String atribute) {
-		try {
-			return driver.findElement(By.xpath(locator)).getAttribute(atribute);
-		} catch (NoSuchElementException e) {
-			return null;
-		}
-	}
-
 }
