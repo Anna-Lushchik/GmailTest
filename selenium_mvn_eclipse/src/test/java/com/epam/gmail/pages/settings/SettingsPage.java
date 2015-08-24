@@ -3,12 +3,14 @@ package com.epam.gmail.pages.settings;
 import org.apache.log4j.Logger;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
-import org.openqa.selenium.interactions.Action;
-import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.PageFactory;
 
 import com.epam.gmail.pages.AbstractPage;
+import java.util.NoSuchElementException;
+import org.openqa.selenium.By;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
 
 public class SettingsPage extends AbstractPage {
 
@@ -26,8 +28,13 @@ public class SettingsPage extends AbstractPage {
 
 	@FindBy(xpath = "//button[@guidedhelpid='save_changes_button']")
 	private WebElement buttonSaveChanges;
+
+	private String settingsTitle = "Settings";
 	
-	
+	String settingsDropdownList = "//div[@class='J-M asi aYO jQjAxd']/div";
+	String pathSettingsTitle = "//h2[@class='dt']";
+	String saveChanges = "//button[@guidedhelpid='save_changes_button']";
+
 	public SettingsPage(WebDriver driver) {
 		super(driver);
 		PageFactory.initElements(this.driver, this);
@@ -51,8 +58,46 @@ public class SettingsPage extends AbstractPage {
 		buttonThemeInSettings.click();
 	}
 
-	public void clickButtonSaveChanges(){
+	public void clickButtonSaveChanges() {
 		buttonSaveChanges.click();
 		logger.info("Save changes in settings");
+	}
+
+	public boolean hasDropDownListSettings() {
+		return isElementDisplayed(settingsDropdownList);
+	}
+
+	public boolean settingsWasOpened() {
+		new WebDriverWait(driver, 60).until(ExpectedConditions
+				.presenceOfElementLocated(By.xpath(pathSettingsTitle)));
+		return getElementText(pathSettingsTitle).equals(settingsTitle);
+	}
+
+	public boolean buttonSaveChangesAvailable() {
+		return isElementEnabled(saveChanges);
+	}
+
+	public boolean isElementDisplayed(String locator) {
+		try {
+			return driver.findElement(By.xpath(locator)).isDisplayed();
+		} catch (NoSuchElementException e) {
+			return false;
+		}
+	}
+
+	public String getElementText(String locator) {
+		try {
+			return driver.findElement(By.xpath(locator)).getText();
+		} catch (NoSuchElementException e) {
+			return null;
+		}
+	}
+
+	public boolean isElementEnabled(String locator) {
+		try {
+			return driver.findElement(By.xpath(locator)).isEnabled();
+		} catch (NoSuchElementException e) {
+			return false;
+		}
 	}
 }

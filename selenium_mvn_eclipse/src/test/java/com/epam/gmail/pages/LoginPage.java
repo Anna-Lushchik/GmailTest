@@ -1,6 +1,7 @@
 package com.epam.gmail.pages;
 
 import org.apache.log4j.Logger;
+import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
@@ -33,8 +34,9 @@ public class LoginPage extends AbstractPage {
 	private WebElement addAccount;
 
 	private String advertising1 = "https://www.gmail.com/intl/en/mail/help/about.html";
-	
 	private String advertising2 = "https://www.gmail.com/intl/en/mail/help/about.html#inbox";
+
+	String GoogleTitleOnLoginPage = "//div[@class='banner']";
 
 	public LoginPage(WebDriver driver) {
 		super(driver);
@@ -78,4 +80,13 @@ public class LoginPage extends AbstractPage {
 		loginPage.login(username, password);
 		logger.info("Change login performed");
 	}
+
+	public boolean mainLoginPageWasOpened() {
+		return isElementPresent(GoogleTitleOnLoginPage);
+	}
+
+	public boolean isElementPresent(String locator) {
+		return driver.findElements(By.xpath(locator)).size() > 0;
+	}
+
 }

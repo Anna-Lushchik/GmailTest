@@ -19,7 +19,7 @@ public class Utils {
 			System.err.println(e);
 		}
 	}
-	
+
 	public void createNewFileWithWrongExtension(String file) {
 		try {
 			File f = new File(file);
@@ -27,13 +27,13 @@ public class Utils {
 			System.err.println(e);
 		}
 	}
-	
+
 	public void uploadFile(String file) throws AWTException {
 		File f = new File(file);
 		String absolutePath = null;
-        if (f.exists()) {
-            absolutePath = f.getAbsolutePath();
-        }
+		if (f.exists()) {
+			absolutePath = f.getAbsolutePath();
+		}
 		Robot robot = new Robot();
 		StringSelection ss = new StringSelection(absolutePath);
 		Toolkit.getDefaultToolkit().getSystemClipboard().setContents(ss, null);

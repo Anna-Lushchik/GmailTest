@@ -1,6 +1,8 @@
 package com.epam.gmail.pages.settings;
 
+import java.util.NoSuchElementException;
 import org.apache.log4j.Logger;
+import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
@@ -29,7 +31,14 @@ public class GeneralPage extends SettingsPage {
 	@FindBy(xpath = "(//div[@class='Am Al editable Xp0HJf-LW-avf'])[2]")
 	private WebElement fieldMessageVacationResponder;
 
-	
+	private String attributeHidefocus = "hidefocus";
+	private String generalTitle = "General";
+
+	String pathGeneralTitle = "//a[@href='https://mail.google.com/mail/#settings/general']";
+	String fieldSignature = "//div[@aria-label='Signature']";
+	String vacationResponderRadioButton = "(//input[@name='bx_ve'])[2]";
+	String topPage = "//div[@class='w-MH a6P']";
+
 	public GeneralPage(WebDriver driver) {
 		super(driver);
 		PageFactory.initElements(this.driver, this);
@@ -58,5 +67,39 @@ public class GeneralPage extends SettingsPage {
 		fieldSubjectVacationResponder.sendKeys(subject);
 		fieldMessageVacationResponder.clear();
 		fieldMessageVacationResponder.sendKeys(message);
+	}
+
+	public boolean generalSettingsPageAppears() {
+		return getElementAtribute(pathGeneralTitle, attributeHidefocus)
+				.contains("true")
+				&& getElementText(pathGeneralTitle).equals(generalTitle);
+	}
+
+	public boolean fieldSignatureHasEnteredText(String signature) {
+		return getElementText(fieldSignature).equals(signature);
+	}
+
+	public boolean vacationResponderOnSelected() {
+		return isElementSelected(vacationResponderRadioButton);
+	}
+
+	public boolean enteredSubjectPresentAtTheTopOfNewPage(String subject) {
+		return getElementText(topPage).contains(subject);
+	}
+
+	public String getElementAtribute(String locator, String atribute) {
+		try {
+			return driver.findElement(By.xpath(locator)).getAttribute(atribute);
+		} catch (NoSuchElementException e) {
+			return null;
+		}
+	}
+
+	public boolean isElementSelected(String locator) {
+		try {
+			return driver.findElement(By.xpath(locator)).isSelected();
+		} catch (NoSuchElementException e) {
+			return false;
+		}
 	}
 }

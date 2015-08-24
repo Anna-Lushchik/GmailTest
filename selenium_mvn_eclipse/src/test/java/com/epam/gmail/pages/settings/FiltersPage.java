@@ -38,7 +38,6 @@ public class FiltersPage extends SettingsPage {
 	@FindBy(className = "T-I J-J5-Ji Zx acL T-I-atl L3")
 	private WebElement buttonCreateFilter;
 
-	
 	public FiltersPage(WebDriver driver) {
 		super(driver);
 		PageFactory.initElements(this.driver, this);

@@ -1,5 +1,6 @@
 package com.epam.gmail.pages;
 
+import java.util.NoSuchElementException;
 import org.apache.log4j.Logger;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
@@ -27,7 +28,7 @@ public class Shortcut extends AbstractPage {
 
 	@FindBy(xpath = "//option[@value='My shortcut']")
 	private WebElement choosePlaceAnShortcutDropdown;
-	
+
 	@FindBy(xpath = "//span[@class='J-Ph-hFsbo']")
 	private WebElement buttonColorShortcut;
 
@@ -40,10 +41,10 @@ public class Shortcut extends AbstractPage {
 	@FindBy(className = "J-at1-auR")
 	private WebElement buttonConfirmColorShortcut;
 
-	@FindBy(xpath="//div[text()='Add sublabel']")
+	@FindBy(xpath = "//div[text()='Add sublabel']")
 	private WebElement buttonAddNestedShortcut;
 
-	@FindBy(xpath="//div[text()='Remove label']")
+	@FindBy(xpath = "//div[text()='Remove label']")
 	private WebElement buttonDeleteShortcut;
 
 	@FindBy(xpath = "//div[@class='Kj-JD-Jl']/button[1]")
@@ -71,6 +72,18 @@ public class Shortcut extends AbstractPage {
 	private WebElement nestedShortcut;
 
 	private String attributeStyle = "style";
+	private String newShortcut = "New Label";
+	private String parentShortcutName = "My shortcut";
+	private String insertedShortcutName = "My inserted shortcut";
+	private String deleteShortcutsTitle = "Remove Labels";
+
+	String shortcutMenu = "//div[@class='J-M J-M-ayU aka']";
+	String createShortcutTitle = "//span[@class='Kj-JD-K7-K0']";
+	String createShortcutWindow = "//div[@class='J-M J-M-ayU aka']";
+	String colorsShortcutMenu = "//div[@class='JA-Kn-Jr-Kw']";
+	String changeColorsShortcutWindow = "//div[@class='Kj-JD']";
+	String deleteShortcutsWindow = "//div[@class='Kj-JD']";
+	String pathDeleteShortcutsTitle = "//span[@class='Kj-JD-K7-K0']";
 
 	public Shortcut(WebDriver driver) {
 		super(driver);
@@ -102,7 +115,7 @@ public class Shortcut extends AbstractPage {
 		buttonColorShortcut.click();
 	}
 
-	public boolean checkShortcutAtTheLeftSide(String nameShortcutParent,
+	public boolean hasShortcutAtTheLeftSide(String nameShortcutParent,
 			String nameShortcutNested) {
 		buttonOpenNestedShortcut.click();
 		return myInsertedShortcut.getText().contains(nameShortcutNested);
@@ -119,7 +132,7 @@ public class Shortcut extends AbstractPage {
 		logger.info("Shortcuts color was changed");
 	}
 
-	public boolean checkColorShortcut(String colorShortcut) {
+	public boolean colorShortcutIsTheSameAsChoosen(String colorShortcut) {
 		Actions action = new Actions(driver);
 		action.moveToElement(shortcutParentLink).build().perform();
 		return pathToColorShortcut.getAttribute(attributeStyle).contains(
@@ -134,7 +147,7 @@ public class Shortcut extends AbstractPage {
 		buttonDeleteShortcut.click();
 	}
 
-	public void checkPresenceBothShortcuts(String nameShortcutParent,
+	public void presenceBothShortcuts(String nameShortcutParent,
 			String nameShortcutNested) {
 		boolean checkPresence = false;
 		if (parentShortcut.getText().contains(nameShortcutParent)
@@ -150,15 +163,64 @@ public class Shortcut extends AbstractPage {
 		logger.info("Shortcuts was deleted");
 	}
 
-	public boolean checkDeleteShortcuts() {
+	public boolean shortcutsDeleted() {
 		boolean deleted = false;
-		boolean deleted1 = driver.findElements(By.xpath("//a[@title='My shortcut']"))
-				.size() > 0;
+		boolean deleted1 = driver.findElements(
+				By.xpath("//a[@title='My shortcut']")).size() > 0;
 		boolean deleted2 = driver.findElements(
 				By.xpath("//a[@title='My inserted shortcut']")).size() > 0;
 		if (deleted1 && deleted2) {
 			deleted = true;
 		}
 		return deleted;
+	}
+
+	public boolean shortcutMenuAppears() {
+		return isElementPresent(shortcutMenu);
+	}
+
+	public boolean dialogNewShortcutAppears() {
+		return getElementText(createShortcutTitle).equals(newShortcut);
+	}
+
+	public boolean windowNewShortcutDisplayed() {
+		return isElementDisplayed(createShortcutWindow);
+	}
+
+	public boolean colourVariantsAppear() {
+		return isElementPresent(colorsShortcutMenu);
+	}
+
+	public boolean dialogChangeColourShortcutsAppears() {
+		return isElementPresent(changeColorsShortcutWindow);
+	}
+
+	public boolean dialogDeleteShortcutsAppears() {
+		boolean result = isElementPresent(deleteShortcutsWindow);
+		if (result) {
+			result = getElementText(pathDeleteShortcutsTitle).equals(
+					deleteShortcutsTitle);
+		}
+		return result;
+	}
+
+	public boolean isElementPresent(String locator) {
+		return driver.findElements(By.xpath(locator)).size() > 0;
+	}
+
+	public String getElementText(String locator) {
+		try {
+			return driver.findElement(By.xpath(locator)).getText();
+		} catch (NoSuchElementException e) {
+			return null;
+		}
+	}
+
+	public boolean isElementDisplayed(String locator) {
+		try {
+			return driver.findElement(By.xpath(locator)).isDisplayed();
+		} catch (NoSuchElementException e) {
+			return false;
+		}
 	}
 }

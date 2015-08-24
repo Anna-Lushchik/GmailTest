@@ -16,7 +16,7 @@ public class Steps {
 
 	private final Logger logger = Logger.getLogger(Steps.class);
 	private static WebDriver driver;
-	
+
 	String lastMessageSubject = "(//div[@class='yW'])[1]";
 	String lastMessageText = "//div[@class='y6']";
 
@@ -36,7 +36,7 @@ public class Steps {
 		driver.quit();
 	}
 
-	public static void deleteCookies() throws InterruptedException {
+	public static void deleteCookies() {
 		driver.manage().deleteAllCookies();
 		driver.navigate().refresh();
 	}
@@ -59,7 +59,7 @@ public class Steps {
 	}
 
 	public void markLetterAsSpam(String username1, String password1,
-			String username2, String password2) throws InterruptedException {
+			String username2, String password2) {
 		MailPage mailPage = new MailPage(driver);
 		SendLetterPage sendLetterPage = new SendLetterPage(driver);
 
@@ -72,7 +72,7 @@ public class Steps {
 		Steps.changeLoginNameGmail(username2, password2);
 
 		mailPage.chooseTopItem();
-		mailPage.markLetterAsSpam();
+		mailPage.markLastLetterAsSpam();
 		Steps.deleteCookies();
 
 		Steps.changeLoginWhenTwoOrMoreNameGmail(username1, password1);
@@ -88,7 +88,7 @@ public class Steps {
 
 	public void forwardLetter(String username1, String password1,
 			String username2, String password2, String username3,
-			String password3) throws InterruptedException, AWTException {
+			String password3) throws AWTException {
 
 		ForwardPage forwardPage = new ForwardPage(driver);
 		FiltersPage filtersPage = new FiltersPage(null);
@@ -117,23 +117,13 @@ public class Steps {
 	}
 
 	public void attachBigFile(String username1, String password1)
-			throws InterruptedException, AWTException {
+			throws AWTException {
 		SendLetterPage sendLetterPage = new SendLetterPage(driver);
 		Utils utils = new Utils();
 		utils.createNewBigFile("t.txt");
 
 		Steps.loginGmail(username1, password1);
 		sendLetterPage.writeNewMessageWithAttach(username1, "theme", "message");
-	}
-
-	public boolean isTheSameLetter(String subject, String message) {
-		boolean sameLetter = false;
-		if(driver.findElement(By.xpath(lastMessageSubject)).getText()
-				.equals(subject) && driver.findElement(By.xpath(lastMessageText)).getText()
-				.contains(message)) {
-			sameLetter = true;
-		}
-		return sameLetter;
 	}
 
 }

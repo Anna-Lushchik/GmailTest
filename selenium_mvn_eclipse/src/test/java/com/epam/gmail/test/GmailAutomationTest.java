@@ -30,6 +30,7 @@ public class GmailAutomationTest {
 	private WebDriver driver;
 
 	private Steps steps;
+	private LoginPage loginPage;
 	private MailPage mailPage;
 	private SendLetterPage sendLetterPage;
 	private SettingsPage settingsPage;
@@ -37,7 +38,6 @@ public class GmailAutomationTest {
 	private GeneralPage generalPage;
 	private Shortcut shortcut;
 	private Utils utils;
-	private Locators locators;
 
 	private final String USERNAME_1 = "bob.keller.test@gmail.com";
 	private final String PASSWORD_1 = "bob.keller";
@@ -46,30 +46,19 @@ public class GmailAutomationTest {
 	private final String USERNAME_3 = "rosie.wilson.test@gmail.com";
 	private final String PASSWORD_3 = "rosie.wilson";
 
-	private String attributeAlt = "alt";
-	private String attributeHidefocus = "hidefocus";
-	private String attributeGoomoji = "goomoji";
-	private String attach = "Attachment";
-	private String messageSizeAttach = "The file that you are trying to send exceeds the 25 MB attachment limit.";
-	private String themeTitle = "Pick your theme";
-	private String themeSelectTitle = "Select your background image";
-	private String messageTipeUploadFile = "Selected file [DSC.NEF] is not supported for upload.";
-	private String settingsTitle = "Settings";
-	private String generalTitle = "General";
-	private String newMessage = "New Message";
-	private String newShortcut = "New Label";
 	private String parentShortcut = "My shortcut";
 	private String insertedShortcut = "My inserted shortcut";
-	private String deleteShortcutsTitle = "Remove Labels";
-	private String selected = "Starred";
 	private String starred = "starred";
 	private String subject = "subject";
-	private String choosenTheme = "//ssl.gstatic.com/ui/v1/icons/mail/themes/beach2/";
+	protected String themeBeach = "//div[@aria-label='Beach (by: iStockPhoto)']";
+	protected String deleteShortcutsWindow = "//div[@class='Kj-JD']";
+	protected String openedLetterWindow = "//div[@class='nH if']";
 
 	@Before
 	public void setUp() throws Exception {
 		PropertyConfigurator.configure("log4j.properties");
 		steps = new Steps();
+		loginPage = new LoginPage(driver);
 		driver = steps.initBrowser();
 		mailPage = new MailPage(driver);
 		sendLetterPage = new SendLetterPage(driver);
@@ -78,7 +67,6 @@ public class GmailAutomationTest {
 		generalPage = new GeneralPage(driver);
 		shortcut = new Shortcut(driver);
 		utils = new Utils();
-		locators = new Locators();
 	}
 
 	@After
@@ -88,302 +76,263 @@ public class GmailAutomationTest {
 
 	@Ignore
 	@Test
-	public void testSpam_1() throws InterruptedException {
+	public void testMarkLetterAsSpam() {
 		steps.markLetterAsSpam(USERNAME_1, PASSWORD_1, USERNAME_2, PASSWORD_2);
-		assertTrue(steps.isTheSameLetter("theme", "message2"));
+		assertTrue(mailPage.hasTestableLetterInSpam("theme", "message2"));
 	}
-	
+
 	@Ignore
 	@Test
-	public void testForward_2() throws InterruptedException, AWTException {
+	public void testCreateForwardAndFilter() throws AWTException {
 		steps.forwardLetter(USERNAME_1, PASSWORD_1, USERNAME_2, PASSWORD_2,
 				USERNAME_3, PASSWORD_3);
-		assertTrue(steps.isTheSameLetter("theme", "message2"));
-		assertEquals("false",
-				getElementAtribute(locators.pathToAttributeMessage, attributeAlt)
-						.contains(attach));
-		
+		assertFalse(mailPage.testableLetterMarkWithAttach("theme", "message"));
+
 		mailPage.clickTrash();
-		assertEquals("false",
-				getElementAtribute(locators.pathToAttributeMessage, attributeAlt)
-						.contains(attach));
+		assertTrue(mailPage.testableLetterMarkWithAttach("theme", "message"));
+
 		steps.changeLoginWhenTwoOrMoreNameGmail(USERNAME_3, PASSWORD_3);
-		assertTrue(steps.isTheSameLetter("theme", "message"));
-		assertEquals("false",
-				getElementAtribute(locators.pathToAttributeMessage, attributeAlt)
-						.contains(attach));
+		assertFalse(mailPage.testableLetterMarkWithAttach("theme", "message"));
 	}
 
 	@Ignore
 	@Test
-	public void testMainMailBoxPage_3() throws InterruptedException,
-			AWTException {
+	public void testSendLetterWithAttachMoreThen25Mb() throws AWTException {
 		steps.attachBigFile(USERNAME_1, PASSWORD_1);
-		assertEquals(messageSizeAttach,
-				getElementText(locators.pathToMessageSizeAttach));
+		assertTrue(mailPage.hasWarningMessageAboutSizeFile());
 	}
 
 	@Ignore
 	@Test
-	public void testThemes_4() throws InterruptedException, AWTException {
+	public void testUploadThemesWithWrongExtension() throws AWTException {
 		steps.loginGmail(USERNAME_1, PASSWORD_1);
-		
 		settingsPage.clickSettingsButton();
-		assertTrue(isElementDisplayed(locators.settingsDropdownList));
-		
+		assertTrue(settingsPage.hasDropDownListSettings());
+
 		settingsPage.clickThemesButtonFromDropdownMenu();
-		assertEquals(themeTitle, getElementText(locators.pathThemeTitle));
-		
+		assertTrue(themePage.windowThemesAppears());
+
 		themePage.clickButtonMyPhotos();
-		new WebDriverWait(driver,60).until(ExpectedConditions.presenceOfElementLocated(By.xpath(locators.pathSelectThemeTitle)));  
-		assertEquals(themeSelectTitle, getElementText(locators.pathSelectThemeTitle));
-		
-		themePage.clickButtonDownloadPhoto();  
+		assertTrue(themePage.windowSelectYourBackgroundImageAppears());
+
+		themePage.clickButtonDownloadPhoto();
 		themePage.clickButtonSelectFileOnComputer();
 
 		utils.createNewFileWithWrongExtension("DSC.NEF");
 		utils.uploadFile("DSC.NEF");
-		assertEquals(messageTipeUploadFile,
-				getElementText(locators.pathToMessageTipeUploadFile));
+		assertTrue(themePage.hasWarningMessageAboutTypeFile());
 	}
 
 	@Ignore
 	@Test
-	public void testSendMailWithAttachement_5() throws InterruptedException {
+	public void testSendMailWithEmoticons() {
 		steps.loginGmail(USERNAME_1, PASSWORD_1);
-		
+
 		sendLetterPage.clickWriteButton();
-		assertEquals(newMessage, getElementText(locators.pathNewMessage));
-		
+		assertTrue(sendLetterPage.windowNewMessageAppears());
+
 		sendLetterPage.writeWhomLetter(USERNAME_1);
 		sendLetterPage.clickEmoticonIcon();
-		assertTrue(isElementPresent(locators.emoticonsWindow));
-		
+		assertTrue(sendLetterPage.windowEmoticonsAppears());
+
 		List listSmiley = sendLetterPage.chooseEmoticons();
-		assertEquals(listSmiley.get(0),
-				getElementAtribute(locators.pathToMessageField + "img[" + 1
-						+ "]", attributeGoomoji));
-		assertEquals(listSmiley.get(1),
-				getElementAtribute(locators.pathToMessageField + "img[" + 2
-						+ "]", attributeGoomoji));
-		
-		assertFalse(isElementDisplayed(locators.emoticonsWindow));
-		
+		assertTrue(sendLetterPage.hasChoosenEmoticons(listSmiley));
+		assertFalse(sendLetterPage.windowEmoticonsAppears());
+
 		sendLetterPage.clickSendButton();
-		assertFalse(isElementDisplayed(locators.pathNewMessage));
-		
+		assertFalse(sendLetterPage.windowNewMessageDisplayed());
+
 		mailPage.openLastMessage();
-		assertEquals(listSmiley.get(0),
-				getElementAtribute(locators.pathToTextMessage + "[1]", attributeGoomoji));
-		assertEquals(listSmiley.get(1),
-				getElementAtribute(locators.pathToTextMessage + "[2]", attributeGoomoji));
+		assertTrue(sendLetterPage.hasSentEmoticonsAtTheMail(listSmiley));
 	}
 
 	@Ignore
 	@Test
-	public void testTheme_6() throws InterruptedException {
+	public void testChooseThemeWithHighResolution() {
 		steps.loginGmail(USERNAME_1, PASSWORD_1);
 		settingsPage.clickSettingsButton();
-		assertEquals(true, isElementDisplayed(locators.settingsDropdownList));
-		
+		assertTrue(settingsPage.hasDropDownListSettings());
+
 		settingsPage.clickSettingsButtonFromDropdownMenu();
-		assertTrue(getElementAtribute(locators.pathGeneralTitle, attributeHidefocus)
-				.contains("true"));
-		
+		assertTrue(generalPage.generalSettingsPageAppears());
+
 		themePage.chooseThemesInset();
-		new WebDriverWait(driver,60).until(ExpectedConditions.presenceOfElementLocated(By.xpath(locators.theme)));   
-		assertTrue(getElementAtribute(locators.theme, attributeHidefocus).contains(
-				"true"));
-		
-		themePage.choosingThemeWithHighResolution(locators.themeBeach);
-		assertTrue(getElementAtribute(locators.pathToChoosenTheme, "src")
-				.contains(choosenTheme));
+		assertTrue(themePage.themeSettingsPageAppears());
+
+		themePage.choosingThemeWithHighResolution(themeBeach);
+		assertTrue(themePage.backgroundChangedToChoosenTheme());
 	}
 
 	@Ignore
 	@Test
-	public void testCreateShortcut_8() throws InterruptedException {
+	public void testCreateInsertedShortcut() {
 		steps.loginGmail(USERNAME_2, PASSWORD_2);
-		
 		shortcut.clickTriangleShortcut();
-		assertTrue(isElementPresent(locators.shortcutMenu));
-		
+		assertTrue(shortcut.shortcutMenuAppears());
+
 		shortcut.clickAddNestedShortcut();
-		assertEquals(newShortcut, getElementText(locators.createShortcutTitle));
-		
+		assertTrue(shortcut.dialogNewShortcutAppears());
+
 		shortcut.createNestedShortcut(insertedShortcut);
-		assertFalse(isElementDisplayed(locators.createShortcutWindow));
-		
-		boolean check = shortcut.checkShortcutAtTheLeftSide(parentShortcut,
-				insertedShortcut);
-		assertEquals(true, check);
+		assertFalse(shortcut.windowNewShortcutDisplayed());
+
+		assertTrue(shortcut.hasShortcutAtTheLeftSide(parentShortcut,
+				insertedShortcut));
 	}
 
 	@Ignore
 	@Test
-	public void testChangeShortcut_9() {
+	public void testChangeColourOfParentAndInsertedShortcutsAtTheSameTime() {
 		steps.loginGmail(USERNAME_2, PASSWORD_2);
-		
 		shortcut.clickTriangleShortcut();
-		assertTrue(isElementPresent(locators.shortcutMenu));
-		
+		assertTrue(shortcut.shortcutMenuAppears());
+
 		shortcut.clickColorShortcut();
-		assertTrue(isElementPresent(locators.colorsShortcutMenu));
-		
+		assertTrue(shortcut.colourVariantsAppear());
+
 		String shortcutColor = shortcut.chooseColoursShortcut();
-		assertTrue(isElementPresent(locators.changeColorsShortcutWindow));
-		
+		assertTrue(shortcut.dialogChangeColourShortcutsAppears());
+
 		shortcut.chooseShortcutsRadiobuttonAndConfirmColor();
-		assertFalse(isElementPresent(locators.changeColorsShortcutWindow));
-		
-		boolean checkColor = shortcut.checkColorShortcut(shortcutColor);
+		assertFalse(shortcut.dialogChangeColourShortcutsAppears());
+
+		boolean checkColor = shortcut
+				.colorShortcutIsTheSameAsChoosen(shortcutColor);
 		logger.info("Colour of both shortcuts is the same - " + checkColor);
 	}
 
 	@Ignore
 	@Test
-	public void testDeleteShortcut_10() {
+	public void testDeleteParentAndInsertedShortcutsAtTheSameTime() {
 		steps.loginGmail(USERNAME_2, PASSWORD_2);
-		
 		shortcut.clickTriangleShortcut();
-		assertTrue(isElementPresent(locators.shortcutMenu));
-		
+		assertTrue(shortcut.shortcutMenuAppears());
+
 		shortcut.clickDeleteShortcut();
-		assertTrue(isElementPresent(locators.deleteShortcutsWindow));
-		assertEquals(deleteShortcutsTitle,
-				getElementText(locators.pathDeleteShortcutsTitle));
-		
-		shortcut.checkPresenceBothShortcuts(parentShortcut, insertedShortcut);
+		assertTrue(shortcut.dialogDeleteShortcutsAppears());
+
+		shortcut.presenceBothShortcuts(parentShortcut, insertedShortcut);
 		shortcut.buttonConfirmDeleteShortcut();
-		new WebDriverWait(driver, 60).until(ExpectedConditions.invisibilityOfElementLocated(By.xpath(locators.deleteShortcutsWindow)));
-		assertFalse(isElementPresent(locators.deleteShortcutsWindow));
-		
-		boolean checkDelete = shortcut.checkDeleteShortcuts();
+		new WebDriverWait(driver, 60).until(ExpectedConditions
+				.invisibilityOfElementLocated(By.xpath(deleteShortcutsWindow)));
+		assertFalse(shortcut.dialogDeleteShortcutsAppears());
+
+		boolean checkDelete = shortcut.shortcutsDeleted();
 		logger.info("Both shortcuts (parent and inserted) are deleted - "
 				+ !checkDelete);
 	}
 
 	@Ignore
 	@Test
-	public void testMarkItemAsSpamAndMarkSpamItemAsNotSpam_11()
-			throws InterruptedException {
+	public void testMarkItemAsSpamAndMarkSpamItemAsNotSpam() {
 		steps.loginGmail(USERNAME_1, PASSWORD_1);
-		
 		mailPage.clickInbox();
-		assertTrue(isElementPresent(locators.listOfLetters));
 		assertTrue(driver.getCurrentUrl().contains("inbox"));
-		
+		assertTrue(mailPage.listOfLettersAppears());
+
 		List<String> chosenLetter = mailPage.chooseTopItem();
-		assertEquals("true",
-				getElementAtribute(locators.lastMessageCheckbox, "aria-checked"));
-		
-		mailPage.markLetterAsSpam();
-		assertFalse(isElementPresent("//div[text()='" + chosenLetter.get(1) + "']"));
-		
+		assertTrue(mailPage.testableItemIsSelected());
+
+		mailPage.markLastLetterAsSpam();
+		assertFalse(mailPage.testableItemRemoved(chosenLetter));
+
 		mailPage.clickSpam();
-		assertTrue(isElementPresent(locators.listOfLetters));
 		assertTrue(driver.getCurrentUrl().contains("spam"));
-		
+		assertTrue(mailPage.listOfLettersAppears());
+
 		List<String> letter = mailPage.openLastMessage();
-		assertTrue(isElementPresent(locators.openedLetterWindow));
-		
+		assertTrue(mailPage.testableItemIsOpened());
+
 		mailPage.clickNotSpam();
-		new WebDriverWait(driver,60).until(ExpectedConditions.presenceOfElementLocated(By.xpath(locators.openedLetterWindow)));;
-		assertFalse(isElementPresent("//div[text()='" + chosenLetter.get(1) + "']"));
+		new WebDriverWait(driver, 60).until(ExpectedConditions
+				.presenceOfElementLocated(By.xpath(openedLetterWindow)));
+		;
 		assertTrue(driver.getCurrentUrl().contains("spam"));
-		
+		assertFalse(mailPage.testableItemRemoved(chosenLetter));
+
 		mailPage.clickInbox();
-		assertTrue(isElementPresent(locators.listOfLetters));
 		assertTrue(driver.getCurrentUrl().contains("inbox"));
-		
-		assertTrue(chosenLetter.contains(letter));  
+		assertTrue(mailPage.listOfLettersAppears());
+
+		assertTrue(chosenLetter.contains(letter));
 	}
 
 	@Ignore
 	@Test
-	public void testCheckingSignature_12() throws InterruptedException {
+	public void testCreateSignature() {
 		steps.loginGmail(USERNAME_1, PASSWORD_1);
-		
 		settingsPage.clickSettingsButton();
 		settingsPage.clickSettingsButtonFromDropdownMenu();
-		new WebDriverWait(driver,60).until(ExpectedConditions.presenceOfElementLocated(By.xpath(locators.pathSettingsTitle)));
-		assertEquals(settingsTitle, getElementText(locators.pathSettingsTitle));
-		
+		assertTrue(settingsPage.settingsWasOpened());
+
 		generalPage.chooseGeneral();
-		assertTrue(getElementAtribute(locators.pathGeneralTitle, attributeHidefocus)
-				.contains("true"));
-		assertEquals(generalTitle, getElementText(locators.pathGeneralTitle));
-		
+		assertTrue(generalPage.generalSettingsPageAppears());
+
 		generalPage.enterSignature(USERNAME_1);
-		assertEquals(USERNAME_1, getElementText(locators.fieldSignature));
-		
+		assertTrue(generalPage.fieldSignatureHasEnteredText(USERNAME_1));
+
 		settingsPage.clickButtonSaveChanges();
-		assertFalse(isElementEnabled(locators.buttonSaveChanges));
-		
+		assertFalse(settingsPage.buttonSaveChangesAvailable());
+
 		sendLetterPage.clickWriteButton();
-		assertEquals(newMessage, getElementText(locators.pathNewMessage));
-		
-		sendLetterPage.checkMessageHasSignature();
-		assertEquals(USERNAME_1, getElementText(locators.signature));
+		assertTrue(sendLetterPage.windowNewMessageAppears());
+
+		sendLetterPage.messageHasSignature();
+		assertTrue(mailPage.newMessageHasSignature(USERNAME_1));
 	}
 
 	@Ignore
 	@Test
-	public void testCheckStarSelection_13() {
+	public void testCheckStarSelection() {
 		steps.loginGmail(USERNAME_2, PASSWORD_2);
-		new WebDriverWait(driver,60).until(ExpectedConditions.presenceOfElementLocated(By.xpath(locators.lastMessageThema)));
-		
-		List<String> starredLetter = mailPage.clickStar(); 
-		assertEquals(selected,
-				getElementAtribute(locators.lastMessageStar, "title"));
-		
+		List<String> starredLetter = mailPage.clickStar();
+		assertTrue(mailPage.testableItemIsStarred());
+
 		mailPage.clickStarred();
 		assertTrue(driver.getCurrentUrl().contains(starred));
-		
-		boolean messagePresent = steps.isTheSameLetter(starredLetter.get(0), starredLetter.get(1));
-		logger.info("Message present in the list of starrred - " + messagePresent);
+
+		boolean messagePresent = mailPage.isTheSameLetter(starredLetter.get(0),
+				starredLetter.get(1));
+		logger.info("Message present in the list of starrred - "
+				+ messagePresent);
 	}
 
 	@Ignore
 	@Test
-	public void testCheckVacation_14() throws InterruptedException {
+	public void testCreateVacation() throws InterruptedException {
 		Date date = new Date();
 		steps.loginGmail(USERNAME_3, PASSWORD_3);
-		
 		settingsPage.clickSettingsButton();
 		settingsPage.clickSettingsButtonFromDropdownMenu();
-		new WebDriverWait(driver,60).until(ExpectedConditions.presenceOfElementLocated(By.xpath(locators.vacationResponderRadioButton)));;
-		assertEquals(settingsTitle, getElementText(locators.pathSettingsTitle));
-		
+		assertTrue(settingsPage.settingsWasOpened());
+
 		generalPage.chooseVacationResponderOnRadiobutton();
-		assertTrue(isElementSelected(locators.vacationResponderRadioButton));
-		
-		generalPage.enterDataVacationResponder("subject", "message");		
+		assertTrue(generalPage.vacationResponderOnSelected());
+
+		generalPage.enterDataVacationResponder(subject, "message");
 		settingsPage.clickButtonSaveChanges();
-		assertTrue(getElementText(locators.topPage).contains(subject));
+		assertTrue(generalPage.enteredSubjectPresentAtTheTopOfNewPage(subject));
+
 		mailPage.confirmVacation();
 		mailPage.singOut();
-		assertTrue(isElementPresent(locators.GoogleTitleOnLoginPage));
-		
+		assertTrue(loginPage.mainLoginPageWasOpened());
+
 		steps.changeLoginNameGmail(USERNAME_2, PASSWORD_2);
-		
 		sendLetterPage.clickWriteButton();
-		assertEquals(newMessage, getElementText(locators.pathNewMessage));
-		new WebDriverWait(driver,60).until(ExpectedConditions.presenceOfElementLocated(By.xpath(locators.whomText)));;
-		
-		sendLetterPage.writeNewMessageWithoutAttach(USERNAME_3, "Test14", "message");
-		assertEquals(USERNAME_3, getElementAtribute(locators.fieldWhom, "email"));
-		assertEquals("Test14", getElementText(locators.fieldTheme));
-		assertEquals("message", getElementText(locators.fieldMessage));
+		assertTrue(sendLetterPage.windowNewMessageAppears());
+
+		sendLetterPage.writeNewMessageWithoutAttach(USERNAME_3, "Test14",
+				"message");
+		assertTrue(sendLetterPage.fildsInNewMessageWasFilledCorrectInformation(
+				USERNAME_3, "Test14", "message"));
 		sendLetterPage.clickSendButton();
-		
+
 		boolean checkVacation = mailPage
-				.checkGotAutoAnswerWithVacationEnteredData("Test14", "message");
+				.hasGotAutoAnswerWithVacationEnteredData("Test14", "message");
 		logger.info("you get auto-answer with vacation entered data - "
 				+ checkVacation);
 	}
 
-	
 	public boolean isElementPresent(String locator) {
 		return driver.findElements(By.xpath(locator)).size() > 0;
 	}

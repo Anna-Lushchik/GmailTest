@@ -13,6 +13,8 @@ import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.PageFactory;
 
 import com.epam.gmail.utils.Utils;
+import java.util.NoSuchElementException;
+import javax.security.auth.Subject;
 
 public class SendLetterPage extends AbstractPage {
 
@@ -39,7 +41,7 @@ public class SendLetterPage extends AbstractPage {
 
 	@FindBy(xpath = "//button[@class='a8v a8t a8t']")
 	private WebElement emotionalSmiley;
-	
+
 	@FindBy(xpath = "//div[@class='a8I']/div/button[5]")
 	private WebElement smiley1;
 
@@ -55,7 +57,17 @@ public class SendLetterPage extends AbstractPage {
 	private WebElement buttonSend;
 
 	private String attributeString = "string";
-	
+	private String attributeGoomoji = "goomoji";
+	private String newMessage = "New Message";
+
+	String pathNewMessage = "//div[@class='aYF']";
+	String emoticonsWindow = "(//div[@class='wVboN'])[1]";
+	String pathToMessageField = "//div[@class='Am Al editable LW-avf']/";
+	String pathToTextMessage = "(//img[@class='CToWUd'])";
+	String Whom = "//div[@class='vT']";
+	String Theme = "//div[@class='Hp']/h2/div[2]";
+	String Message = "//div[@class='Am Al editable LW-avf']";
+
 	public SendLetterPage(WebDriver driver) {
 		super(driver);
 		PageFactory.initElements(this.driver, this);
@@ -83,8 +95,8 @@ public class SendLetterPage extends AbstractPage {
 		logger.info("Sent a letter with filled fields whom, subject, message");
 	}
 
-	
-	public void writeNewMessageWithoutAttach(String whom, String subject, String message) {
+	public void writeNewMessageWithoutAttach(String whom, String subject,
+			String message) {
 		fieldWhom.sendKeys(whom);
 		fieldTheme.sendKeys(subject);
 		fieldMessage.sendKeys(message);
@@ -92,7 +104,7 @@ public class SendLetterPage extends AbstractPage {
 	}
 
 	public void writeNewMessageWithAttach(String whom, String subject,
-			String message) throws AWTException{
+			String message) throws AWTException {
 		Utils utils = new Utils();
 		SendLetterPage sendLetterPage = new SendLetterPage(driver);
 		buttonWrite.click();
@@ -127,7 +139,68 @@ public class SendLetterPage extends AbstractPage {
 		logger.info("Sent a letter");
 	}
 
-	public boolean checkMessageHasSignature() {
+	public boolean messageHasSignature() {
 		return driver.findElements(By.xpath(signature)).size() > 0;
+	}
+
+	public boolean isElementPresent(String locator) {
+		return driver.findElements(By.xpath(locator)).size() > 0;
+	}
+
+	public boolean windowNewMessageAppears() {
+		return getElementText(pathNewMessage).equals(newMessage);
+	}
+
+	public boolean windowEmoticonsAppears() {
+		return isElementDisplayed(emoticonsWindow);
+	}
+
+	public boolean hasChoosenEmoticons(List listSmiley) {
+		return getElementAtribute(pathToMessageField + "img[" + 1 + "]",
+				attributeGoomoji).equals(listSmiley.get(0))
+				&& getElementAtribute(pathToMessageField + "img[" + 1 + "]",
+						attributeGoomoji).equals(listSmiley.get(1));
+	}
+
+	public boolean windowNewMessageDisplayed() {
+		return isElementDisplayed(pathNewMessage);
+	}
+
+	public boolean hasSentEmoticonsAtTheMail(List listSmiley) {
+		return getElementAtribute(pathToTextMessage + "[1]", attributeGoomoji)
+				.equals(listSmiley.get(0))
+				&& getElementAtribute(pathToTextMessage + "[2]",
+						attributeGoomoji).equals(listSmiley.get(1));
+	}
+
+	public boolean fildsInNewMessageWasFilledCorrectInformation(
+			String username, String subject, String message) {
+		return getElementAtribute(Whom, "email").equals(username)
+				&& getElementText(Theme).equals(subject)
+				&& getElementText(Message).equals(message);
+	}
+
+	public boolean isElementDisplayed(String locator) {
+		try {
+			return driver.findElement(By.xpath(locator)).isDisplayed();
+		} catch (NoSuchElementException e) {
+			return false;
+		}
+	}
+
+	public String getElementText(String locator) {
+		try {
+			return driver.findElement(By.xpath(locator)).getText();
+		} catch (NoSuchElementException e) {
+			return null;
+		}
+	}
+
+	public String getElementAtribute(String locator, String atribute) {
+		try {
+			return driver.findElement(By.xpath(locator)).getAttribute(atribute);
+		} catch (NoSuchElementException e) {
+			return null;
+		}
 	}
 }

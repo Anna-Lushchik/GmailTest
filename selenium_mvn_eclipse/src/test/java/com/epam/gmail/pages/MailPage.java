@@ -16,11 +16,13 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 
 import com.epam.gmail.steps.Steps;
 
+import java.util.NoSuchElementException;
+
 public class MailPage extends AbstractPage {
 
 	private static final Logger logger = Logger.getLogger(MailPage.class);
 	private final String BASE_URL = "https://mail.google.com/mail/#inbox";
-	
+
 	@FindBy(xpath = "//span[@class='gb_Ma']")
 	private WebElement usernameLink;
 
@@ -64,9 +66,9 @@ public class MailPage extends AbstractPage {
 	private String openedMessageSubject = "//h2[@class='hP']";
 
 	private String openedMessageText = "//div[@class='a3s']";
-	
+
 	@FindBy(xpath = "(//a[@rel='noreferrer'])[1]")
-	private WebElement confirmForwardingLink;	
+	private WebElement confirmForwardingLink;
 
 	@FindBy(xpath = "//input[@type='submit']")
 	private WebElement confirmForwardingButton;
@@ -75,11 +77,39 @@ public class MailPage extends AbstractPage {
 	private WebElement confirmVacationLink;
 
 	private String starredURL = "https://mail.google.com/mail/#starred";
-	
+
 	private String trashURL = "https://mail.google.com/mail/#trash";
-	
+
 	private String spamURL = "https://mail.google.com/mail/#spam";
-	
+
+	private String attributeAlt = "alt";
+	private String attributeHidefocus = "hidefocus";
+	private String attributeGoomoji = "goomoji";
+	private String attach = "Attachment";
+	private String messageSizeAttach = "The file that you are trying to send exceeds the 25 MB attachment limit.";
+	private String themeTitle = "Pick your theme";
+	private String themeSelectTitle = "Select your background image";
+	private String messageTipeUploadFile = "Selected file [DSC.NEF] is not supported for upload.";
+	private String settingsTitle = "Settings";
+	private String generalTitle = "General";
+	private String newMessage = "New Message";
+	private String newShortcut = "New Label";
+	private String parentShortcut = "My shortcut";
+	private String insertedShortcut = "My inserted shortcut";
+	private String deleteShortcutsTitle = "Remove Labels";
+	private String selected = "Starred";
+	private String starred = "starred";
+	private String subject = "subject";
+	private String choosenTheme = "//ssl.gstatic.com/ui/v1/icons/mail/themes/beach2/";
+
+	String pathToAttributeMessage = "//img[@class='yE']";
+	String pathToMessageSizeAttach = "//span[@class='Kj-JD-K7-K0']";
+	String listOfLetters = "//div[@class='Cp']";
+	String lastLetterCheckbox = "(//div[@class='T-Jo-auh'])[2]";
+	String openedLetterWindow = "//div[@class='nH if']";
+	String signature = "//div[@dir='J-J5-Ji']";
+	String lastLetterStar = "(//span[@class='aXw T-KT'])[1]";
+
 	public MailPage(WebDriver driver) {
 		super(driver);
 		PageFactory.initElements(this.driver, this);
@@ -116,14 +146,15 @@ public class MailPage extends AbstractPage {
 		logger.info("In spam folder");
 	}
 
-	public void markLetterAsSpam() {
+	public void markLastLetterAsSpam() {
 		buttonToSpam.click();
 		logger.info("Mark letter as spam");
 	}
 
 	public List<String> chooseTopItem() {
 		List<String> letterText = new ArrayList<String>();
-		letterText.add(driver.findElement(By.xpath(lastMessageSubject)).getText());
+		letterText.add(driver.findElement(By.xpath(lastMessageSubject))
+				.getText());
 		letterText.add(driver.findElement(By.xpath(lastMessageText)).getText());
 		lastMessageCheckbox.click();
 		logger.info("Choose top item");
@@ -137,14 +168,15 @@ public class MailPage extends AbstractPage {
 
 	public List<String> clickStar() {
 		List<String> letterText = new ArrayList<String>();
-		letterText.add(driver.findElement(By.xpath(lastMessageSubject)).getText());
+		letterText.add(driver.findElement(By.xpath(lastMessageSubject))
+				.getText());
 		letterText.add(driver.findElement(By.xpath(lastMessageText)).getText());
 		lastMessageStar.click();
 		logger.info("Mark letter by star");
 		return letterText;
 	}
 
-	public void confirmForward() throws InterruptedException {
+	public void confirmForward() {
 		lastMessageLink.click();
 		String originalWindow = driver.getWindowHandle();
 		final Set<String> oldWindowsSet = driver.getWindowHandles();
@@ -158,16 +190,18 @@ public class MailPage extends AbstractPage {
 								.iterator().next() : null;
 					}
 				});
-        driver.switchTo().window(newWindowHandle);
-        confirmForwardingButton.click();
+		driver.switchTo().window(newWindowHandle);
+		confirmForwardingButton.click();
 		driver.switchTo().window(originalWindow);
 	}
 
-	public  List<String> openLastMessage() {
+	public List<String> openLastMessage() {
 		lastMessageLink.click();
 		List<String> letterText = new ArrayList<String>();
-		letterText.add(driver.findElement(By.xpath(openedMessageSubject)).getText());
-		letterText.add(driver.findElement(By.xpath(openedMessageText)).getText());
+		letterText.add(driver.findElement(By.xpath(openedMessageSubject))
+				.getText());
+		letterText.add(driver.findElement(By.xpath(openedMessageText))
+				.getText());
 		return letterText;
 	}
 
@@ -175,18 +209,95 @@ public class MailPage extends AbstractPage {
 		confirmVacationLink.click();
 	}
 
-	public boolean checkGotAutoAnswerWithVacationEnteredData(String theme,
+	public boolean hasGotAutoAnswerWithVacationEnteredData(String theme,
 			String message) throws InterruptedException {
 		Steps steps = new Steps();
-		for(int i = 0; i <= 50 || steps.isTheSameLetter(theme, message); i++) {
+		for (int i = 0; i <= 50 || isTheSameLetter(theme, message); i++) {
 			Thread.sleep(300);
 		}
-		return steps.isTheSameLetter(theme, message);
+		return isTheSameLetter(theme, message);
 	}
 
 	public void singOut() {
 		usernameLink.click();
 		buttonSingOut.click();
 		logger.info("Sing out performed");
+	}
+
+	public boolean hasTestableLetterInSpam(String theme, String message) {
+		Steps steps = new Steps();
+		return isTheSameLetter(theme, message);
+	}
+
+	public boolean testableLetterMarkWithAttach(String theme, String message) {
+		boolean result = false;
+		Steps steps = new Steps();
+		if (getElementAtribute(pathToAttributeMessage, attributeAlt).contains(
+				attach)
+				&& isTheSameLetter(theme, message)) {
+			result = true;
+		}
+		return result;
+	}
+
+	public boolean hasWarningMessageAboutSizeFile() {
+		return getElementText(pathToMessageSizeAttach)
+				.equals(messageSizeAttach);
+	}
+
+	public boolean listOfLettersAppears() {
+		return isElementPresent(listOfLetters);
+	}
+
+	public boolean testableItemIsSelected() {
+		return getElementAtribute(lastLetterCheckbox, "aria-checked").equals(
+				"true");
+	}
+
+	public boolean testableItemIsStarred() {
+		return getElementAtribute(lastLetterStar, "title").equals(selected);
+	}
+
+	public boolean testableItemRemoved(List chosenLetter) {
+		return isElementPresent("//div[text()='" + chosenLetter.get(1) + "']");
+	}
+
+	public boolean testableItemIsOpened() {
+		return isElementPresent(openedLetterWindow);
+	}
+
+	public boolean newMessageHasSignature(String signatureText) {
+		return getElementText(signature).equals(signatureText);
+	}
+
+	public String getElementText(String locator) {
+		try {
+			return driver.findElement(By.xpath(locator)).getText();
+		} catch (NoSuchElementException e) {
+			return null;
+		}
+	}
+
+	public boolean isElementPresent(String locator) {
+		return driver.findElements(By.xpath(locator)).size() > 0;
+	}
+
+	public String getElementAtribute(String locator, String atribute) {
+		try {
+			return driver.findElement(By.xpath(locator)).getAttribute(atribute);
+		} catch (NoSuchElementException e) {
+			return null;
+		}
+	}
+
+	public boolean isTheSameLetter(String subject, String message) {
+		boolean sameLetter = false;
+		if (driver.findElement(By.xpath(lastMessageSubject)).getText()
+				.equals(subject)
+				&& driver.findElement(By.xpath(lastMessageText)).getText()
+						.contains(message)) {
+			sameLetter = true;
+		}
+		return sameLetter;
 	}
 }

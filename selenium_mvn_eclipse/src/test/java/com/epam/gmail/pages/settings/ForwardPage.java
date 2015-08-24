@@ -3,13 +3,10 @@ package com.epam.gmail.pages.settings;
 import java.util.Set;
 
 import org.apache.log4j.Logger;
-import org.openqa.selenium.Alert;
-import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.PageFactory;
-import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.openqa.selenium.support.ui.ExpectedCondition;
 
@@ -20,7 +17,7 @@ public class ForwardPage extends SettingsPage {
 
 	@FindBy(xpath = "//a[@href='https://mail.google.com/mail/#settings/fwdandpop']")
 	private WebElement buttonForwarding;
-	
+
 	@FindBy(xpath = "//div[@class='rU']/button")
 	private WebElement saveChanges;
 
@@ -52,13 +49,13 @@ public class ForwardPage extends SettingsPage {
 		driver.navigate().to(BASE_URL);
 	}
 
-	public void setForward(String username) throws InterruptedException {
+	public void setForward(String username) {
 		super.clickSettingsButton();
 		super.clickSettingsButtonFromDropdownMenu();
 		buttonForwarding.click();
 		buttonAddForwardingAddress.click();
 		fieldForwardingAddress.sendKeys(username);
-        String originalWindow = driver.getWindowHandle();
+		String originalWindow = driver.getWindowHandle();
 		final Set<String> oldWindowsSet = driver.getWindowHandles();
 		buttonNextForwarding.click();
 		String newWindowHandle = (new WebDriverWait(driver, 10))
@@ -70,8 +67,8 @@ public class ForwardPage extends SettingsPage {
 								.iterator().next() : null;
 					}
 				});
-        driver.switchTo().window(newWindowHandle);
-		confirmForwardingAddress.click(); 
+		driver.switchTo().window(newWindowHandle);
+		confirmForwardingAddress.click();
 		driver.switchTo().window(originalWindow);
 		buttonOkInConfirmForwardingAddress.click();
 	}
@@ -81,6 +78,7 @@ public class ForwardPage extends SettingsPage {
 		super.clickSettingsButtonFromDropdownMenu();
 		buttonForwarding.click();
 		forwardCopyRadiobutton.click();
-		saveChanges.click();;
+		saveChanges.click();
+		;
 	}
 }
