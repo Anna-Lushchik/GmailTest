@@ -101,6 +101,7 @@ public class MailPage extends AbstractPage {
 	private String spamURL = "https://mail.google.com/mail/#spam";
 
 	private String attributeAlt = "alt";
+	private String attributeTitle = "title";
 	private String attach = "Attachment";
 	private String messageSizeAttach = "The file that you are trying to send exceeds the 25 MB attachment limit.";
 	private String selected = "Starred";
@@ -219,12 +220,8 @@ public class MailPage extends AbstractPage {
 	}
 
 	public boolean testableLetterMarkWithAttach(String theme, String message) {
-		boolean result = false;
-		if (pathToAttributeMessage.getAttribute(attributeAlt).contains(attach)
-				&& isTheSameLetter(theme, message)) {
-			result = true;
-		}
-		return result;
+		return pathToAttributeMessage.getAttribute(attributeAlt).contains(attach)
+				&& isTheSameLetter(theme, message);
 	}
 
 	public boolean hasWarningMessageAboutSizeFile() {
@@ -240,7 +237,7 @@ public class MailPage extends AbstractPage {
 	}
 
 	public boolean testableItemIsStarred() {
-		return lastLetterStar.getAttribute("title").equals(selected);
+		return lastLetterStar.getAttribute(attributeTitle).equals(selected);
 	}
 
 	public boolean testableItemRemoved(List<String> chosenLetter) {
@@ -257,29 +254,9 @@ public class MailPage extends AbstractPage {
 		return signature.getText().equals(signatureText);
 	}
 
-	public String getElementText(String locator) {
-		try {
-			return driver.findElement(By.xpath(locator)).getText();
-		} catch (NoSuchElementException e) {
-			return null;
-		}
-	}
-
-	public String getElementAtribute(String locator, String atribute) {
-		try {
-			return driver.findElement(By.xpath(locator)).getAttribute(atribute);
-		} catch (NoSuchElementException e) {
-			return null;
-		}
-	}
-
 	public boolean isTheSameLetter(String subject, String message) {
-		boolean sameLetter = false;
-		if (lastMessageSubject.getText().equals(subject)
-				&& lastMessageText.getText().contains(message)) {
-			sameLetter = true;
-		}
-		return sameLetter;
+		return lastMessageSubject.getText().equals(subject)
+				&& lastMessageText.getText().contains(message);
 	}
 
 	public boolean isElementPresent(String locator) {

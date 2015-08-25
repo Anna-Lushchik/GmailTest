@@ -49,6 +49,8 @@ public class GmailAutomationTest {
 	private String message = "message";
 	private String theme = "theme";
 	private String fileWithNotImageExtension = "DSC.NEF";
+	private String bigFile = "t.txt";
+	private String file = "file.txt";
 	protected String themeBeach = "//div[@aria-label='Beach (by: iStockPhoto)']";
 	private String spam = "spam";
 	private String inbox = "inbox";
@@ -83,8 +85,9 @@ public class GmailAutomationTest {
 	@Ignore
 	@Test
 	public void testCreateForwardAndFilter() throws AWTException {
+		utils.createNewFile(file);
 		steps.forwardLetter(USERNAME_1, PASSWORD_1, USERNAME_2, PASSWORD_2,
-				USERNAME_3, PASSWORD_3);
+				USERNAME_3, PASSWORD_3, file);
 		assertFalse(mailPage.testableLetterMarkWithAttach(theme, message));
 
 		mailPage.clickTrash();
@@ -97,7 +100,7 @@ public class GmailAutomationTest {
 	@Ignore
 	@Test
 	public void testSendLetterWithAttachMoreThen25Mb() throws AWTException {
-		steps.attachBigFile(USERNAME_1, PASSWORD_1);
+		steps.attachBigFile(USERNAME_1, PASSWORD_1, bigFile);
 		assertTrue(mailPage.hasWarningMessageAboutSizeFile());
 	}
 
@@ -117,7 +120,7 @@ public class GmailAutomationTest {
 		themePage.clickButtonDownloadPhoto();
 		themePage.clickButtonSelectFileOnComputer();
 
-		utils.createNewFileWithWrongExtension(fileWithNotImageExtension);
+		utils.createNewFile(fileWithNotImageExtension);
 		utils.uploadFile(fileWithNotImageExtension);
 		assertTrue(themePage.hasWarningMessageAboutTypeFile());
 	}

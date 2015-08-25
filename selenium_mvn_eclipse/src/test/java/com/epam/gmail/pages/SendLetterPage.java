@@ -113,7 +113,7 @@ public class SendLetterPage extends AbstractPage {
 	}
 
 	public void writeNewMessageWithAttach(String whom, String subject,
-			String message) throws AWTException {
+			String message, String file) throws AWTException {
 		Utils utils = new Utils();
 		SendLetterPage sendLetterPage = new SendLetterPage(driver);
 		buttonWrite.click();
@@ -122,7 +122,7 @@ public class SendLetterPage extends AbstractPage {
 		fieldTheme.sendKeys(subject);
 		fieldMessage.sendKeys(message);
 		attachment.click();
-		utils.uploadFile("t.txt");
+		utils.uploadFile(file);
 		buttonSend.click();
 		logger.info("Sent a letter with attach");
 	}

@@ -19,7 +19,7 @@ public class Utils {
 		}
 	}
 
-	public void createNewFileWithWrongExtension(String file) {
+	public void createNewFile(String file) {
 		try {
 			File f = new File(file);
 		} catch (Exception e) {

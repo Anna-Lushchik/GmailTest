@@ -84,7 +84,7 @@ public class Steps {
 
 	public void forwardLetter(String username1, String password1,
 			String username2, String password2, String username3,
-			String password3) throws AWTException {
+			String password3, String file) throws AWTException {
 
 		ForwardPage forwardPage = new ForwardPage(driver);
 		FiltersPage filtersPage = new FiltersPage(null);
@@ -107,18 +107,18 @@ public class Steps {
 		Steps.changeLoginWhenTwoOrMoreNameGmail(username1, password1);
 		sendLetterPage.clickWriteButton();
 		sendLetterPage.writeNewMessage(username2, "theme", "message");
-		sendLetterPage.writeNewMessageWithAttach(username2, "theme", "message");
+		sendLetterPage.writeNewMessageWithAttach(username2, "theme", "message", file);
 
 		Steps.changeLoginWhenTwoOrMoreNameGmail(username2, password2);
 	}
 
-	public void attachBigFile(String username1, String password1)
+	public void attachBigFile(String username1, String password1, String file)
 			throws AWTException {
 		SendLetterPage sendLetterPage = new SendLetterPage(driver);
 		Utils utils = new Utils();
-		utils.createNewBigFile("t.txt");
+		utils.createNewBigFile(file);
 
 		Steps.loginGmail(username1, password1);
-		sendLetterPage.writeNewMessageWithAttach(username1, "theme", "message");
+		sendLetterPage.writeNewMessageWithAttach(username1, "theme", "message", file);
 	}
 }

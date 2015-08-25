@@ -79,6 +79,5 @@ public class ForwardPage extends SettingsPage {
 		buttonForwarding.click();
 		forwardCopyRadiobutton.click();
 		saveChanges.click();
-		;
 	}
 }
