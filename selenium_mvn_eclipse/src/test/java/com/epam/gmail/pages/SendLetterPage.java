@@ -2,18 +2,17 @@ package com.epam.gmail.pages;
 
 import org.apache.log4j.Logger;
 
-import java.awt.AWTException;
-import java.util.ArrayList;
-import java.util.List;
-
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.PageFactory;
 
+import com.epam.gmail.business.Email;
 import com.epam.gmail.utils.Utils;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.NoSuchElementException;
 
 public class SendLetterPage extends AbstractPage {
@@ -73,9 +72,10 @@ public class SendLetterPage extends AbstractPage {
 
 	private String pathToMessageField = "//div[@class='Am Al editable LW-avf']/";
 
-	private String attributeString = "string";
-	private String attributeGoomoji = "goomoji";
-	private String newMessage = "New Message";
+	private String ATTRIBUTE_STRING = "string";
+	private String ATTRIBUTE_GOOMOGI = "goomoji";
+	private String NEW_MESSAGE = "New Message";
+	private String EMAIL = "email";
 
 	public SendLetterPage(WebDriver driver) {
 		super(driver);
@@ -113,7 +113,7 @@ public class SendLetterPage extends AbstractPage {
 	}
 
 	public void writeNewMessageWithAttach(String whom, String subject,
-			String message, String file) throws AWTException {
+			String message, String file) {
 		Utils utils = new Utils();
 		SendLetterPage sendLetterPage = new SendLetterPage(driver);
 		buttonWrite.click();
@@ -132,15 +132,18 @@ public class SendLetterPage extends AbstractPage {
 		emotionalSmiley.click();
 	}
 
-	public List<String> chooseEmoticons() {
+	public Email chooseEmoticons() {
+		Email choosenEmoticons = new Email();
 		List<String> listSmiley = new ArrayList<String>();
 		smiley1.click();
-		listSmiley.add(smiley1.getAttribute(attributeString));
+		listSmiley.add(smiley1.getAttribute(ATTRIBUTE_STRING));
 		smiley2.click();
-		listSmiley.add(smiley2.getAttribute(attributeString));
+		listSmiley.add(smiley2.getAttribute(ATTRIBUTE_STRING));
+		choosenEmoticons.setSmiley(listSmiley);
 		buttonSmileyClose.click();
 		logger.info("Emoticons was chosen");
-		return listSmiley;
+
+		return choosenEmoticons;
 	}
 
 	public void clickSendButton() {
@@ -153,34 +156,34 @@ public class SendLetterPage extends AbstractPage {
 	}
 
 	public boolean windowNewMessageAppears() {
-		return pathNewMessage.getText().equals(newMessage);
+		return pathNewMessage.getText().equals(NEW_MESSAGE);
 	}
 
 	public boolean windowEmoticonsAppears() {
 		return emoticonsWindow.isDisplayed();
 	}
 
-	public boolean hasChoosenEmoticons(List<String> listSmiley) {
+	public boolean hasChoosenEmoticons(List<String> choosenEmoticons) {
 		return getElementAtribute(pathToMessageField + "img[" + 1 + "]",
-				attributeGoomoji).equals(listSmiley.get(0))
+				ATTRIBUTE_GOOMOGI).equals(choosenEmoticons.get(0))
 				&& getElementAtribute(pathToMessageField + "img[" + 1 + "]",
-						attributeGoomoji).equals(listSmiley.get(1));
+						ATTRIBUTE_GOOMOGI).equals(choosenEmoticons.get(1));
 	}
 
 	public boolean windowNewMessageDisplayed() {
 		return pathNewMessage.isDisplayed();
 	}
 
-	public boolean hasSentEmoticonsAtTheMail(List<String> listSmiley) {
-		return getElementAtribute(pathToTextMessage + "[1]", attributeGoomoji)
-				.equals(listSmiley.get(0))
+	public boolean hasSentEmoticonsAtTheMail(List<String> choosenEmoticons) {
+		return getElementAtribute(pathToTextMessage + "[1]", ATTRIBUTE_GOOMOGI)
+				.equals(choosenEmoticons.get(0))
 				&& getElementAtribute(pathToTextMessage + "[2]",
-						attributeGoomoji).equals(listSmiley.get(1));
+						ATTRIBUTE_GOOMOGI).equals(choosenEmoticons.get(1));
 	}
 
 	public boolean fildsInNewMessageWasFilledCorrectInformation(
 			String username, String subject, String message) {
-		return whomField.getAttribute("email").equals(username)
+		return whomField.getAttribute(EMAIL).equals(username)
 				&& themeField.getText().equals(subject)
 				&& fieldMessage.getText().equals(message);
 	}

@@ -36,8 +36,8 @@ public class LoginPage extends AbstractPage {
 	@FindBy(xpath = "//div[@class='banner']")
 	private String GoogleTitleOnLoginPage;
 
-	private String advertising1 = "https://www.gmail.com/intl/en/mail/help/about.html";
-	private String advertising2 = "https://www.gmail.com/intl/en/mail/help/about.html#inbox";
+	private String ADVERTISING1 = "https://www.gmail.com/intl/en/mail/help/about.html";
+	private String ADVERTISING2 = "https://www.gmail.com/intl/en/mail/help/about.html#inbox";
 
 	public LoginPage(WebDriver driver) {
 		super(driver);
@@ -60,8 +60,8 @@ public class LoginPage extends AbstractPage {
 	}
 
 	public void changeLogin(String username, String password) {
-		if (driver.getCurrentUrl().equals(advertising1)
-				|| driver.getCurrentUrl().equals(advertising2)) {
+		if (driver.getCurrentUrl().equals(ADVERTISING1)
+				|| driver.getCurrentUrl().equals(ADVERTISING2)) {
 			buttonSignInFromAdvertising.click();
 		}
 		switchAccount.click();
@@ -72,8 +72,8 @@ public class LoginPage extends AbstractPage {
 	}
 
 	public void changeLoginWhenTwoOrMoreName(String username, String password) {
-		if (driver.getCurrentUrl().equals(advertising1)
-				|| driver.getCurrentUrl().equals(advertising2)) {
+		if (driver.getCurrentUrl().equals(ADVERTISING1)
+				|| driver.getCurrentUrl().equals(ADVERTISING2)) {
 			buttonSignInFromAdvertising.click();
 		}
 		addAccount.click();

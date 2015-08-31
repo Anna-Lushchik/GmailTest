@@ -1,7 +1,5 @@
 package com.epam.gmail.pages;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Set;
 
 import org.apache.log4j.Logger;
@@ -14,7 +12,7 @@ import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
-import java.util.NoSuchElementException;
+import com.epam.gmail.business.Email;
 
 public class MailPage extends AbstractPage {
 
@@ -45,7 +43,7 @@ public class MailPage extends AbstractPage {
 	@FindBy(xpath = "//div[@class='asl T-I-J3 J-J5-Ji']")
 	private WebElement buttonToSpam;
 
-	@FindBy(xpath = "//div[@class='iH']/div/div/div[text()='Not spam']")
+	@FindBy(xpath = "//div[text()='Not spam']")
 	private WebElement buttonNotSpam;
 
 	@FindBy(xpath = "(//div[@class='T-Jo-auh'])[2]")
@@ -100,11 +98,12 @@ public class MailPage extends AbstractPage {
 	private String trashURL = "https://mail.google.com/mail/#trash";
 	private String spamURL = "https://mail.google.com/mail/#spam";
 
-	private String attributeAlt = "alt";
-	private String attributeTitle = "title";
-	private String attach = "Attachment";
-	private String messageSizeAttach = "The file that you are trying to send exceeds the 25 MB attachment limit.";
-	private String selected = "Starred";
+	private String ATTRIBUTE_ALT = "alt";
+	private String ATTRIBUTE_TITLE = "title";
+	private String ATTACH = "Attachment";
+	private String MESSAGE_SIZE_ATTACH = "The file that you are trying to send exceeds the 25 MB attachment limit.";
+	private String STARRED = "Starred";
+	private String SELECTED = "aria-checked";
 
 	public MailPage(WebDriver driver) {
 		super(driver);
@@ -117,25 +116,25 @@ public class MailPage extends AbstractPage {
 		logger.info("Mail page opened");
 	}
 
-	public void clickInbox() {
+	public void goToInbox() {
 		driver.navigate().to(BASE_URL);
 		logger.info("In inbox folder");
 	}
 
-	public void clickStarred() {
+	public void goToStarred() {
 		buttonStarred.click();
 		driver.get(starredURL);
 		logger.info("In starred folder");
 	}
 
-	public void clickTrash() {
+	public void goToTrash() {
 		buttonElse.click();
 		buttonTrash.click();
 		driver.get(trashURL);
 		logger.info("In trash folder");
 	}
 
-	public void clickSpam() {
+	public void goToSpam() {
 		buttonElse.click();
 		buttonSpam.click();
 		driver.get(spamURL);
@@ -147,13 +146,14 @@ public class MailPage extends AbstractPage {
 		logger.info("Mark letter as spam");
 	}
 
-	public List<String> chooseTopItem() {
-		List<String> letterText = new ArrayList<String>();
-		letterText.add(lastMessageSubject.getText());
-		letterText.add(lastMessageText.getText());
+	public Email chooseTopItem() {
 		lastMessageCheckbox.click();
+		Email markedEmail = new Email();
+		markedEmail.setSubject(lastMessageSubject.getText());
+		markedEmail.setBody(lastMessageText.getText());
 		logger.info("Choose top item");
-		return letterText;
+		
+		return markedEmail;
 	}
 
 	public void clickNotSpam() {
@@ -161,13 +161,14 @@ public class MailPage extends AbstractPage {
 		logger.info("Mark letter as not spam");
 	}
 
-	public List<String> clickStar() {
-		List<String> letterText = new ArrayList<String>();
-		letterText.add(lastMessageSubject.getText());
-		letterText.add(lastMessageText.getText());
+	public Email clickStar() {
 		lastMessageStar.click();
+		Email starredEmail = new Email();
+		starredEmail.setSubject(lastMessageSubject.getText());
+		starredEmail.setBody(lastMessageText.getText());
 		logger.info("Mark letter by star");
-		return letterText;
+
+		return starredEmail;
 	}
 
 	public void confirmForward() {
@@ -189,12 +190,14 @@ public class MailPage extends AbstractPage {
 		driver.switchTo().window(originalWindow);
 	}
 
-	public List<String> openLastMessage() {
+	public Email openLastMessage() {
 		lastMessageLink.click();
-		List<String> letterText = new ArrayList<String>();
-		letterText.add(openedMessageSubject.getText());
-		letterText.add(openedMessageText.getText());
-		return letterText;
+		Email openedEmail = new Email(); 
+		openedEmail.setSubject(openedMessageSubject.getText());
+		openedEmail.setBody(openedMessageText.getText());
+		logger.info("Open last message");
+		
+		return openedEmail;
 	}
 
 	public void confirmVacation() {
@@ -202,9 +205,13 @@ public class MailPage extends AbstractPage {
 	}
 
 	public boolean hasGotAutoAnswerWithVacationEnteredData(String theme,
-			String message) throws InterruptedException {
+			String message) {
 		for (int i = 0; i <= 50 || isTheSameLetter(theme, message); i++) {
-			Thread.sleep(300);
+			try {
+				Thread.sleep(300);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
 		}
 		return isTheSameLetter(theme, message);
 	}
@@ -220,12 +227,12 @@ public class MailPage extends AbstractPage {
 	}
 
 	public boolean testableLetterMarkWithAttach(String theme, String message) {
-		return pathToAttributeMessage.getAttribute(attributeAlt).contains(attach)
+		return pathToAttributeMessage.getAttribute(ATTRIBUTE_ALT).contains(ATTACH)
 				&& isTheSameLetter(theme, message);
 	}
 
 	public boolean hasWarningMessageAboutSizeFile() {
-		return pathToMessageSizeAttach.getText().equals(messageSizeAttach);
+		return pathToMessageSizeAttach.getText().equals(MESSAGE_SIZE_ATTACH);
 	}
 
 	public boolean listOfLettersAppears() {
@@ -233,17 +240,19 @@ public class MailPage extends AbstractPage {
 	}
 
 	public boolean testableItemIsSelected() {
-		return lastMessageCheckbox.getAttribute("aria-checked").equals("true");
+		return lastMessageCheckbox.getAttribute(SELECTED).equals("true");
 	}
 
 	public boolean testableItemIsStarred() {
-		return lastLetterStar.getAttribute(attributeTitle).equals(selected);
+		System.out.println(lastLetterStar.getAttribute(ATTRIBUTE_TITLE));
+		System.out.println(STARRED);
+		return lastLetterStar.getAttribute(ATTRIBUTE_TITLE).equals(STARRED);
 	}
 
-	public boolean testableItemRemoved(List<String> chosenLetter) {
+	public boolean testableItemRemoved(String testableItem) {
 		new WebDriverWait(driver, 60).until(ExpectedConditions
 				.presenceOfElementLocated(By.xpath(openedLetterWindow)));
-		return isElementPresent("//div[text()='" + chosenLetter.get(1) + "']");
+		return isElementPresent("//div[text()='" + testableItem + "']");
 	}
 
 	public boolean testableItemIsOpened() {

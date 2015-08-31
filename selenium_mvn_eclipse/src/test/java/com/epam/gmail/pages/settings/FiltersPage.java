@@ -46,6 +46,7 @@ public class FiltersPage extends SettingsPage {
 	@Override
 	public void openPage() {
 		driver.navigate().to(BASE_URL);
+		logger.info("Filters page opened");
 	}
 
 	public void setFilters(String username) {

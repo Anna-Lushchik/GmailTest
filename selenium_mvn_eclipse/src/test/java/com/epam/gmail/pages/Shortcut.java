@@ -57,6 +57,12 @@ public class Shortcut extends AbstractPage {
 	@FindBy(xpath = "//a[@title='My inserted shortcut']")
 	private WebElement shortcutInsertedLink;
 
+	@FindBy(xpath = "//a[@title='My shortcut']")
+	private String shortcutParent;
+
+	@FindBy(xpath = "//a[@title='My inserted shortcut']")
+	private String shortcutInserted;
+
 	@FindBy(xpath = "(//div[@class='TN aY7xie aze'])[1]")
 	private WebElement buttonOpenNestedShortcut;
 
@@ -87,9 +93,9 @@ public class Shortcut extends AbstractPage {
 	@FindBy(xpath = "//div[@class='Kj-JD']")
 	private String changeShortcutWindow;
 
-	private String attributeStyle = "style";
-	private String newShortcut = "New Label";
-	private String deleteShortcutsTitle = "Remove Labels";
+	private String ATTRIBUTE_STYLE = "style";
+	private String NEW_SHORTCUT = "New Label";
+	private String DELETE_SHORTCUTS_TITLE = "Remove Labels";
 
 	public Shortcut(WebDriver driver) {
 		super(driver);
@@ -129,7 +135,7 @@ public class Shortcut extends AbstractPage {
 
 	public String chooseColoursShortcut() {
 		colorShortcut.click();
-		return colorShortcut.getAttribute(attributeStyle);
+		return colorShortcut.getAttribute(ATTRIBUTE_STYLE);
 	}
 
 	public void chooseShortcutsRadiobuttonAndConfirmColor() {
@@ -141,7 +147,7 @@ public class Shortcut extends AbstractPage {
 	public boolean colorShortcutIsTheSameAsChoosen(String colorShortcut) {
 		Actions action = new Actions(driver);
 		action.moveToElement(shortcutParentLink).build().perform();
-		return pathToColorShortcut.getAttribute(attributeStyle).contains(
+		return pathToColorShortcut.getAttribute(ATTRIBUTE_STYLE).contains(
 				colorShortcut);
 	}
 
@@ -171,10 +177,8 @@ public class Shortcut extends AbstractPage {
 
 	public boolean shortcutsDeleted() {
 		boolean deleted = false;
-		boolean deleted1 = driver.findElements(
-				By.xpath("//a[@title='My shortcut']")).size() > 0;
-		boolean deleted2 = driver.findElements(
-				By.xpath("//a[@title='My inserted shortcut']")).size() > 0;
+		boolean deleted1 = driver.findElements(By.xpath(shortcutParent)).size() > 0;
+		boolean deleted2 = driver.findElements(By.xpath(shortcutInserted)).size() > 0;
 		if (deleted1 && deleted2) {
 			deleted = true;
 		}
@@ -186,7 +190,7 @@ public class Shortcut extends AbstractPage {
 	}
 
 	public boolean dialogNewShortcutAppears() {
-		return changeShortcutTitle.getText().equals(newShortcut);
+		return changeShortcutTitle.getText().equals(NEW_SHORTCUT);
 	}
 
 	public boolean windowNewShortcutDisplayed() {
@@ -206,7 +210,7 @@ public class Shortcut extends AbstractPage {
 				.invisibilityOfElementLocated(By.xpath(changeShortcutWindow)));
 		boolean result = isElementPresent(changeShortcutWindow);
 		if (result) {
-			result = changeShortcutTitle.getText().equals(deleteShortcutsTitle);
+			result = changeShortcutTitle.getText().equals(DELETE_SHORTCUTS_TITLE);
 		}
 		return result;
 	}

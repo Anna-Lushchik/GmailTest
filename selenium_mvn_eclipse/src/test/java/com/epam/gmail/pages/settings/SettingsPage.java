@@ -34,7 +34,7 @@ public class SettingsPage extends AbstractPage {
 	@FindBy(xpath = "//h2[@class='dt']")
 	private WebElement pathSettingsTitle;
 
-	private String settingsTitle = "Settings";
+	private String SETTINGS_TITLE = "Settings";
 
 	public SettingsPage(WebDriver driver) {
 		super(driver);
@@ -71,7 +71,7 @@ public class SettingsPage extends AbstractPage {
 	public boolean settingsWasOpened() {
 		new WebDriverWait(driver, 60).until(ExpectedConditions
 				.presenceOfElementLocated((By) pathSettingsTitle));
-		return pathSettingsTitle.getText().equals(settingsTitle);
+		return pathSettingsTitle.getText().equals(SETTINGS_TITLE);
 	}
 
 	public boolean buttonSaveChangesAvailable() {

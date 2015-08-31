@@ -32,8 +32,8 @@ public class GeneralPage extends SettingsPage {
 	@FindBy(xpath = "//div[@class='w-MH a6P']")
 	private WebElement topPage;
 
-	private String attributeHidefocus = "hidefocus";
-	private String generalTitle = "General";
+	private String ATTRIBUTE_HIDEFOCUS = "hidefocus";
+	private String GENERAL_TITLE = "General";
 
 	public GeneralPage(WebDriver driver) {
 		super(driver);
@@ -43,6 +43,7 @@ public class GeneralPage extends SettingsPage {
 	@Override
 	public void openPage() {
 		driver.navigate().to(BASE_URL);
+		logger.info("General page opened");
 	}
 
 	public void chooseGeneral() {
@@ -66,8 +67,8 @@ public class GeneralPage extends SettingsPage {
 	}
 
 	public boolean generalSettingsPageAppears() {
-		return buttonGeneral.getAttribute(attributeHidefocus).contains("true")
-				&& buttonGeneral.getText().equals(generalTitle);
+		return buttonGeneral.getAttribute(ATTRIBUTE_HIDEFOCUS).contains("true")
+				&& buttonGeneral.getText().equals(GENERAL_TITLE);
 	}
 
 	public boolean fieldSignatureHasEnteredText(String signature) {

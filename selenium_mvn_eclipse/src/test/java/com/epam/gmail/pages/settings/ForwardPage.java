@@ -47,6 +47,7 @@ public class ForwardPage extends SettingsPage {
 	@Override
 	public void openPage() {
 		driver.navigate().to(BASE_URL);
+		logger.info("Forward page opened");
 	}
 
 	public void setForward(String username) {

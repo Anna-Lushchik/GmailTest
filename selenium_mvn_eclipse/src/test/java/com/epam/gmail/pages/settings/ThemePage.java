@@ -23,7 +23,7 @@ public class ThemePage extends SettingsPage {
 	@FindBy(xpath = "//a[@class='e NvzLyc']")
 	private WebElement setThemes;
 
-	@FindBy(xpath = "//div[@class='Kj-JD-Jl a8Y']/div[text()='My Photos']")
+	@FindBy(xpath = "//div[text()='My Photos']")
 	private WebElement buttonMyPhotos;
 
 	@FindBy(xpath = "//div[text()='Upload a photo']")
@@ -47,11 +47,13 @@ public class ThemePage extends SettingsPage {
 	@FindBy(xpath = "//div[@class='a4t']/img")
 	private WebElement pathToChoosenTheme;
 
-	private String themeTitle = "Pick your theme";
-	private String themeSelectTitle = "Select your background image";
-	private String messageTipeUploadFile = "Selected file [DSC.NEF] is not supported for upload.";
-	private String attributeHidefocus = "hidefocus";
-	private String choosenTheme = "//ssl.gstatic.com/ui/v1/icons/mail/themes/beach2/";
+	private String THEME_TITLE = "Pick your theme";
+	private String THEME_SELECT_TITLE = "Select your background image";
+	private String MESSAGE_TIPE_UPLOAD_FILE = "Selected file [DSC.NEF] is not supported for upload.";
+	private String ATTRIBUTE_HIDEFOCUS = "hidefocus";
+	private String ATTRIBUTE_SRC = "src";
+	protected String THEME_BEACH = "//div[@aria-label='Beach (by: iStockPhoto)']";
+	private String CHOOSEN_THEME = "//ssl.gstatic.com/ui/v1/icons/mail/themes/beach2/";
 
 	public ThemePage(WebDriver driver) {
 		super(driver);
@@ -61,6 +63,7 @@ public class ThemePage extends SettingsPage {
 	@Override
 	public void openPage() {
 		driver.navigate().to(BASE_URL);
+		logger.info("Theme page opened");
 	}
 
 	public void changeThemes() {
@@ -85,33 +88,33 @@ public class ThemePage extends SettingsPage {
 		buttonThemes.click();
 	}
 
-	public void choosingThemeWithHighResolution(String themeBeach) {
+	public void choosingThemeWithHighResolution() {
 		setThemes.click();
-		driver.findElement(By.xpath(themeBeach)).click();
+		driver.findElement(By.xpath(THEME_BEACH)).click();
 	}
 
 	public boolean windowThemesAppears() {
-		return pathThemeTitle.getText().equals(themeTitle);
+		return pathThemeTitle.getText().equals(THEME_TITLE);
 	}
 
 	public boolean windowSelectYourBackgroundImageAppears() {
 		new WebDriverWait(driver, 60).until(ExpectedConditions
 				.presenceOfElementLocated((By) pathSelectThemeTitle));
-		return pathSelectThemeTitle.getText().equals(themeSelectTitle);
+		return pathSelectThemeTitle.getText().equals(THEME_SELECT_TITLE);
 	}
 
 	public boolean hasWarningMessageAboutTypeFile() {
 		return pathToMessageTipeUploadFile.getText().equals(
-				messageTipeUploadFile);
+				MESSAGE_TIPE_UPLOAD_FILE);
 	}
 
 	public boolean themeSettingsPageAppears() {
 		new WebDriverWait(driver, 60).until(ExpectedConditions
 				.presenceOfElementLocated((By) buttonThemes));
-		return buttonThemes.getAttribute(attributeHidefocus).contains("true");
+		return buttonThemes.getAttribute(ATTRIBUTE_HIDEFOCUS).contains("true");
 	}
 
 	public boolean backgroundChangedToChoosenTheme() {
-		return pathToChoosenTheme.getAttribute("src").contains(choosenTheme);
+		return pathToChoosenTheme.getAttribute(ATTRIBUTE_SRC).contains(CHOOSEN_THEME);
 	}
 }
