@@ -7,8 +7,6 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.PageFactory;
-import org.openqa.selenium.support.ui.ExpectedConditions;
-import org.openqa.selenium.support.ui.WebDriverWait;
 
 public class Shortcut extends AbstractPage {
 
@@ -57,16 +55,15 @@ public class Shortcut extends AbstractPage {
 	@FindBy(xpath = "//a[@title='My inserted shortcut']")
 	private WebElement shortcutInsertedLink;
 
-	@FindBy(xpath = "//a[@title='My shortcut']")
-	private String shortcutParent;
+	private String shortcutParent = "//a[@title='My shortcut']";
 
 	@FindBy(xpath = "//a[@title='My inserted shortcut']")
-	private String shortcutInserted;
+	private String shortcutInserted = "//a[@title='My inserted shortcut']";
 
 	@FindBy(xpath = "(//div[@class='TN aY7xie aze'])[1]")
 	private WebElement buttonOpenNestedShortcut;
 
-	@FindBy(xpath = "//div[@class='TN aY7xie aik']")
+	@FindBy(xpath = "(//div[@class='aio aip'])[2]")
 	private WebElement myInsertedShortcut;
 
 	@FindBy(xpath = "//div[@class='pM']")
@@ -81,21 +78,18 @@ public class Shortcut extends AbstractPage {
 	@FindBy(xpath = "//div[@class='J-M J-M-ayU aka']")
 	private WebElement shortcutMenu;
 
-	@FindBy(xpath = "//div[@class='J-M J-M-ayU aka']")
-	private String shortcutMenuPath;
+	private String shortcutMenuPath = "//div[@class='J-M J-M-ayU aka']";
 
 	@FindBy(xpath = "//span[@class='Kj-JD-K7-K0']")
 	private WebElement changeShortcutTitle;
 
-	@FindBy(xpath = "//div[@class='JA-Kn-Jr-Kw']")
-	private String colorsShortcutMenu;
+	private String colorsShortcutMenu = "//div[@class='JA-Kn-Jr-Kw']";
 
 	@FindBy(xpath = "//div[@class='Kj-JD']")
-	private String changeShortcutWindow;
+	private WebElement changeShortcutWindow;
 
 	private String ATTRIBUTE_STYLE = "style";
 	private String NEW_SHORTCUT = "New Label";
-	private String DELETE_SHORTCUTS_TITLE = "Remove Labels";
 
 	public Shortcut(WebDriver driver) {
 		super(driver);
@@ -202,17 +196,11 @@ public class Shortcut extends AbstractPage {
 	}
 
 	public boolean dialogChangeColourShortcutsAppears() {
-		return isElementPresent(changeShortcutWindow);
+		return changeShortcutWindow.isDisplayed();
 	}
 
 	public boolean dialogDeleteShortcutsAppears() {
-		new WebDriverWait(driver, 60).until(ExpectedConditions
-				.invisibilityOfElementLocated(By.xpath(changeShortcutWindow)));
-		boolean result = isElementPresent(changeShortcutWindow);
-		if (result) {
-			result = changeShortcutTitle.getText().equals(DELETE_SHORTCUTS_TITLE);
-		}
-		return result;
+		return changeShortcutWindow.isDisplayed();
 	}
 
 	public boolean isElementPresent(String locator) {

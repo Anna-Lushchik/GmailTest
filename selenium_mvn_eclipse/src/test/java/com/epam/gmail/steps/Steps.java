@@ -33,6 +33,11 @@ public class Steps {
 
 	public static void deleteCookies() {
 		driver.manage().deleteAllCookies();
+		try {
+			Thread.sleep(3000);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
 		driver.navigate().refresh();
 	}
 

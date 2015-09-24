@@ -1,7 +1,6 @@
 package com.epam.gmail.pages;
 
 import org.apache.log4j.Logger;
-
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -59,8 +58,7 @@ public class SendLetterPage extends AbstractPage {
 	@FindBy(xpath = "(//div[@class='wVboN'])[1]")
 	private WebElement emoticonsWindow;
 
-	@FindBy(xpath = "(//img[@class='CToWUd'])")
-	private WebElement pathToTextMessage;
+	private String pathToTextMessage = "(//img[@class='CToWUd'])";
 
 	@FindBy(xpath = "//div[@class='vT']")
 	private WebElement whomField;
@@ -75,7 +73,6 @@ public class SendLetterPage extends AbstractPage {
 	private String ATTRIBUTE_STRING = "string";
 	private String ATTRIBUTE_GOOMOGI = "goomoji";
 	private String NEW_MESSAGE = "New Message";
-	private String EMAIL = "email";
 
 	public SendLetterPage(WebDriver driver) {
 		super(driver);
@@ -166,7 +163,7 @@ public class SendLetterPage extends AbstractPage {
 	public boolean hasChoosenEmoticons(List<String> choosenEmoticons) {
 		return getElementAtribute(pathToMessageField + "img[" + 1 + "]",
 				ATTRIBUTE_GOOMOGI).equals(choosenEmoticons.get(0))
-				&& getElementAtribute(pathToMessageField + "img[" + 1 + "]",
+				&& getElementAtribute(pathToMessageField + "img[" + 2 + "]",
 						ATTRIBUTE_GOOMOGI).equals(choosenEmoticons.get(1));
 	}
 
@@ -183,8 +180,7 @@ public class SendLetterPage extends AbstractPage {
 
 	public boolean fildsInNewMessageWasFilledCorrectInformation(
 			String username, String subject, String message) {
-		return whomField.getAttribute(EMAIL).equals(username)
-				&& themeField.getText().equals(subject)
+		return themeField.getText().equals(subject)
 				&& fieldMessage.getText().equals(message);
 	}
 

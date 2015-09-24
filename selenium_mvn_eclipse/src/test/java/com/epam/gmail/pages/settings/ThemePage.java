@@ -38,8 +38,11 @@ public class ThemePage extends SettingsPage {
 	@FindBy(xpath = "//span[@class='Kj-JD-K7-K0']")
 	private WebElement pathThemeTitle;
 
-	@FindBy(xpath = "//div[@class='Xf-cg-fc Xf-Ke-lf']")
+	@FindBy(xpath = "//div[@class='ag-Ne-tc']")
 	private WebElement pathSelectThemeTitle;
+	
+	@FindBy(xpath = "//div[@class='KA Kj-JD picker-dialog']")
+	private WebElement pathSelectThemeWindow;
 
 	@FindBy(xpath = "//div[@style='margin-top: 27px;']")
 	private WebElement pathToMessageTipeUploadFile;
@@ -98,9 +101,7 @@ public class ThemePage extends SettingsPage {
 	}
 
 	public boolean windowSelectYourBackgroundImageAppears() {
-		new WebDriverWait(driver, 60).until(ExpectedConditions
-				.presenceOfElementLocated((By) pathSelectThemeTitle));
-		return pathSelectThemeTitle.getText().equals(THEME_SELECT_TITLE);
+		return pathSelectThemeWindow.isDisplayed();
 	}
 
 	public boolean hasWarningMessageAboutTypeFile() {
@@ -109,8 +110,6 @@ public class ThemePage extends SettingsPage {
 	}
 
 	public boolean themeSettingsPageAppears() {
-		new WebDriverWait(driver, 60).until(ExpectedConditions
-				.presenceOfElementLocated((By) buttonThemes));
 		return buttonThemes.getAttribute(ATTRIBUTE_HIDEFOCUS).contains("true");
 	}
 

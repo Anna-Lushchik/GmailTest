@@ -18,7 +18,7 @@ public class ForwardPage extends SettingsPage {
 	@FindBy(xpath = "//a[@href='https://mail.google.com/mail/#settings/fwdandpop']")
 	private WebElement buttonForwarding;
 
-	@FindBy(xpath = "//div[@class='rU']/button")
+	@FindBy(xpath = "//div[@class='rU']/button[1]")
 	private WebElement saveChanges;
 
 	@FindBy(xpath = "//input[@act='add']")

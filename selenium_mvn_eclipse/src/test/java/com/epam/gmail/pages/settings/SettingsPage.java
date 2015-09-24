@@ -7,9 +7,6 @@ import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.PageFactory;
 
 import com.epam.gmail.pages.AbstractPage;
-import org.openqa.selenium.By;
-import org.openqa.selenium.support.ui.ExpectedConditions;
-import org.openqa.selenium.support.ui.WebDriverWait;
 
 public class SettingsPage extends AbstractPage {
 
@@ -33,8 +30,9 @@ public class SettingsPage extends AbstractPage {
 
 	@FindBy(xpath = "//h2[@class='dt']")
 	private WebElement pathSettingsTitle;
-
-	private String SETTINGS_TITLE = "Settings";
+	
+	@FindBy(xpath = "//div[@class='Tm aeJ']")
+	private WebElement settingsWindow;
 
 	public SettingsPage(WebDriver driver) {
 		super(driver);
@@ -69,9 +67,7 @@ public class SettingsPage extends AbstractPage {
 	}
 
 	public boolean settingsWasOpened() {
-		new WebDriverWait(driver, 60).until(ExpectedConditions
-				.presenceOfElementLocated((By) pathSettingsTitle));
-		return pathSettingsTitle.getText().equals(SETTINGS_TITLE);
+		return settingsWindow.isDisplayed();
 	}
 
 	public boolean buttonSaveChangesAvailable() {

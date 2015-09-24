@@ -75,15 +75,15 @@ public class GmailAutomationTest {
 		steps.closeDriver();
 	}
 
-	//@Ignore
+	@Ignore
 	@Test
 	public void testSecondLetterInSpamAfterFirstLetterMarkedAsSpam() {
 		steps.markLetterAsSpam(USERNAME_1, PASSWORD_1, USERNAME_2, PASSWORD_2,
 				THEME1, MESSAGE1, THEME2, MESSAGE2);
-		assertTrue(mailPage.hasTestableLetterInSpam(THEME, MESSAGE2));
+		assertTrue(mailPage.hasTestableLetterInSpam(THEME2, MESSAGE2));
 	}
 
-	//@Ignore
+	@Ignore
 	@Test
 	public void testCreateForwardAndFilter() {
 		utils.createNewFile(FILE);
@@ -98,14 +98,14 @@ public class GmailAutomationTest {
 		assertFalse(mailPage.testableLetterMarkWithAttach(THEME, MESSAGE));
 	}
 
-	//@Ignore
+	@Ignore
 	@Test
 	public void testSendLetterWithAttachMoreThen25Mb() {
 		steps.attachBigFile(USERNAME_1, PASSWORD_1, BIG_FILE, THEME, MESSAGE);
 		assertTrue(mailPage.hasWarningMessageAboutSizeFile());
 	}
 
-	//@Ignore
+	@Ignore
 	@Test
 	public void testUploadThemesWithWrongExtension() {
 		steps.loginGmail(USERNAME_1, PASSWORD_1);
@@ -126,7 +126,7 @@ public class GmailAutomationTest {
 		assertTrue(themePage.hasWarningMessageAboutTypeFile());
 	}
 
-	//@Ignore
+	@Ignore
 	@Test
 	public void testSendMailWithEmoticons() {
 		steps.loginGmail(USERNAME_1, PASSWORD_1);
@@ -151,7 +151,7 @@ public class GmailAutomationTest {
 				.getSmiley()));
 	}
 
-	//@Ignore
+	@Ignore
 	@Test
 	public void testChooseThemeWithHighResolution() {
 		steps.loginGmail(USERNAME_1, PASSWORD_1);
@@ -168,10 +168,10 @@ public class GmailAutomationTest {
 		assertTrue(themePage.backgroundChangedToChoosenTheme());
 	}
 
-	//@Ignore
+	@Ignore
 	@Test
 	public void testCreateInsertedShortcut() {
-		steps.loginGmail(USERNAME_2, PASSWORD_2);
+		steps.loginGmail(USERNAME_1, PASSWORD_1);
 		shortcut.clickTriangleShortcut();
 		assertTrue(shortcut.shortcutMenuAppears());
 
@@ -185,7 +185,7 @@ public class GmailAutomationTest {
 				INSERTED_SHORTCUT));
 	}
 
-	//@Ignore
+	@Ignore
 	@Test
 	public void testChangeColourOfParentAndInsertedShortcutsAtTheSameTime() {
 		steps.loginGmail(USERNAME_2, PASSWORD_2);
@@ -206,10 +206,10 @@ public class GmailAutomationTest {
 		logger.info("Colour of both shortcuts is the same - " + checkColor);
 	}
 
-	//@Ignore
+	@Ignore
 	@Test
 	public void testDeleteParentAndInsertedShortcutsAtTheSameTime() {
-		steps.loginGmail(USERNAME_2, PASSWORD_2);
+		steps.loginGmail(USERNAME_3, PASSWORD_3);
 		shortcut.clickTriangleShortcut();
 		assertTrue(shortcut.shortcutMenuAppears());
 
@@ -226,7 +226,7 @@ public class GmailAutomationTest {
 				+ !checkDelete);
 	}
 
-	//@Ignore
+	@Ignore
 	@Test
 	public void testMarkItemAsSpamAndMarkSpamItemAsNotSpam() {
 		steps.loginGmail(USERNAME_1, PASSWORD_1);
@@ -258,7 +258,7 @@ public class GmailAutomationTest {
 		assertTrue(markedEmail.getBody().contains(openedEmail.getBody()));
 	}
 
-	//@Ignore
+	@Ignore
 	@Test
 	public void testCreateSignature() {
 		steps.loginGmail(USERNAME_1, PASSWORD_1);
@@ -282,7 +282,7 @@ public class GmailAutomationTest {
 		assertTrue(mailPage.newMessageHasSignature(USERNAME_1));
 	}
 
-	//@Ignore
+	@Ignore
 	@Test
 	public void testCheckStarSelection() {
 		steps.loginGmail(USERNAME_2, PASSWORD_2);
@@ -299,7 +299,7 @@ public class GmailAutomationTest {
 				+ messagePresent);
 	}
 
-	//@Ignore
+	@Ignore
 	@Test
 	public void testCreateVacation() {
 		steps.loginGmail(USERNAME_3, PASSWORD_3);
@@ -316,7 +316,6 @@ public class GmailAutomationTest {
 
 		mailPage.confirmVacation();
 		mailPage.singOut();
-		assertTrue(loginPage.mainLoginPageWasOpened());
 
 		steps.changeLoginNameGmail(USERNAME_2, PASSWORD_2);
 		sendLetterPage.clickWriteButton();

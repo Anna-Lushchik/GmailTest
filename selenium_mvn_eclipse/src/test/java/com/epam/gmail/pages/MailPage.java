@@ -9,7 +9,6 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.PageFactory;
 import org.openqa.selenium.support.ui.ExpectedCondition;
-import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 import com.epam.gmail.business.Email;
@@ -19,7 +18,7 @@ public class MailPage extends AbstractPage {
 	private static final Logger logger = Logger.getLogger(MailPage.class);
 	private final String BASE_URL = "https://mail.google.com/mail/#inbox";
 
-	@FindBy(xpath = "//span[@class='gb_Ma']")
+	@FindBy(xpath = "//div[@class='gb_Xb gb_Ua gb_ae gb_R']/a")
 	private WebElement usernameLink;
 
 	@FindBy(id = "gb_71")
@@ -46,7 +45,7 @@ public class MailPage extends AbstractPage {
 	@FindBy(xpath = "//div[text()='Not spam']")
 	private WebElement buttonNotSpam;
 
-	@FindBy(xpath = "(//div[@class='T-Jo-auh'])[2]")
+	@FindBy(xpath = "(//td[@class='oZ-x3 xY'])[1]/div")
 	private WebElement lastMessageCheckbox;
 
 	@FindBy(xpath = "//td[@class='apU xY']")
@@ -82,16 +81,14 @@ public class MailPage extends AbstractPage {
 	@FindBy(xpath = "//span[@class='Kj-JD-K7-K0']")
 	private WebElement pathToMessageSizeAttach;
 
-	@FindBy(xpath = "//div[@class='Cp']")
-	private String listOfLetters;
+	private String listOfLetters = "//div[@class='Cp']";
 
-	@FindBy(xpath = "//div[@class='nH if']")
-	private String openedLetterWindow;
+	private String openedLetterWindow = "//div[@class='nH if']";
 
-	@FindBy(xpath = "//div[@dir='J-J5-Ji']")
+	@FindBy(xpath = "//div[@class='gmail_signature']")
 	private WebElement signature;
 
-	@FindBy(xpath = "(//span[@class='aXw T-KT'])[1]")
+	@FindBy(xpath = "(//td[@class='apU xY'])[1]/span")
 	private WebElement lastLetterStar;
 
 	private String starredURL = "https://mail.google.com/mail/#starred";
@@ -123,21 +120,21 @@ public class MailPage extends AbstractPage {
 
 	public void goToStarred() {
 		buttonStarred.click();
-		driver.get(starredURL);
+		driver.navigate().to(starredURL);
 		logger.info("In starred folder");
 	}
 
 	public void goToTrash() {
 		buttonElse.click();
 		buttonTrash.click();
-		driver.get(trashURL);
+		driver.navigate().to(trashURL);
 		logger.info("In trash folder");
 	}
 
 	public void goToSpam() {
 		buttonElse.click();
 		buttonSpam.click();
-		driver.get(spamURL);
+		driver.navigate().to(spamURL);
 		logger.info("In spam folder");
 	}
 
@@ -191,6 +188,7 @@ public class MailPage extends AbstractPage {
 	}
 
 	public Email openLastMessage() {
+		driver.navigate().refresh();
 		lastMessageLink.click();
 		Email openedEmail = new Email(); 
 		openedEmail.setSubject(openedMessageSubject.getText());
@@ -244,14 +242,10 @@ public class MailPage extends AbstractPage {
 	}
 
 	public boolean testableItemIsStarred() {
-		System.out.println(lastLetterStar.getAttribute(ATTRIBUTE_TITLE));
-		System.out.println(STARRED);
 		return lastLetterStar.getAttribute(ATTRIBUTE_TITLE).equals(STARRED);
 	}
 
 	public boolean testableItemRemoved(String testableItem) {
-		new WebDriverWait(driver, 60).until(ExpectedConditions
-				.presenceOfElementLocated(By.xpath(openedLetterWindow)));
 		return isElementPresent("//div[text()='" + testableItem + "']");
 	}
 
@@ -264,7 +258,7 @@ public class MailPage extends AbstractPage {
 	}
 
 	public boolean isTheSameLetter(String subject, String message) {
-		return lastMessageSubject.getText().equals(subject)
+		return lastMessageSubject.getText().contains(subject)
 				&& lastMessageText.getText().contains(message);
 	}
 
