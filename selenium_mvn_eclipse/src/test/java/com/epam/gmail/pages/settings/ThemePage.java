@@ -23,7 +23,7 @@ public class ThemePage extends SettingsPage {
 	@FindBy(xpath = "//a[@class='e NvzLyc']")
 	private WebElement setThemes;
 
-	@FindBy(xpath = "//div[text()='My Photos']")
+	@FindBy(xpath = "//div[@class='J-J5-Ji T-I T-I-ax7 a94']")
 	private WebElement buttonMyPhotos;
 
 	@FindBy(xpath = "//div[text()='Upload a photo']")
@@ -41,7 +41,7 @@ public class ThemePage extends SettingsPage {
 	@FindBy(xpath = "//div[@class='ag-Ne-tc']")
 	private WebElement pathSelectThemeTitle;
 	
-	@FindBy(xpath = "//div[@class='KA Kj-JD picker-dialog']")
+	@FindBy(xpath = "//div[@class='Kj-JD a8j']")
 	private WebElement pathSelectThemeWindow;
 
 	@FindBy(xpath = "//div[@style='margin-top: 27px;']")

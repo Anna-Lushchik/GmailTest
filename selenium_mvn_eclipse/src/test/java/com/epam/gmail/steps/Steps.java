@@ -32,8 +32,8 @@ public class Steps {
 	}
 
 	public static void deleteCookies() {
-		driver.manage().deleteAllCookies();
 		try {
+			driver.manage().deleteAllCookies();
 			Thread.sleep(3000);
 		} catch (InterruptedException e) {
 			e.printStackTrace();

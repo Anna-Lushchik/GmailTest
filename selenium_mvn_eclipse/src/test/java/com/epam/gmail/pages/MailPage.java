@@ -51,7 +51,7 @@ public class MailPage extends AbstractPage {
 	@FindBy(xpath = "//td[@class='apU xY']")
 	private WebElement lastMessageStar;
 
-	@FindBy(xpath = "//div[@class='xS']")
+	@FindBy(xpath = "(//div[@class='xS'])[1]")
 	private WebElement lastMessageLink;
 
 	@FindBy(xpath = "(//div[@class='yW'])[1]")
@@ -188,7 +188,8 @@ public class MailPage extends AbstractPage {
 	}
 
 	public Email openLastMessage() {
-		driver.navigate().refresh();
+		MailPage mailPage = new MailPage(driver);
+		mailPage.goToInbox();
 		lastMessageLink.click();
 		Email openedEmail = new Email(); 
 		openedEmail.setSubject(openedMessageSubject.getText());
